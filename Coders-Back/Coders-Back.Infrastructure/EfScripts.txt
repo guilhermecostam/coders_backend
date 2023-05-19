@@ -1,0 +1,5 @@
+// Add new Migration
+dotnet ef migrations add <MigtationName> --project Coders-Back.Infrastructure --startup-project Coders-Back.Host --verbose
+
+// Apply Migration / Update DB
+dotnet ef database update --project Coders-Back.Infrastructure --startup-project Coders-Back.Host --verbose
