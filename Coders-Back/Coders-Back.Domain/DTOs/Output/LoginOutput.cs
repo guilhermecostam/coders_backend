@@ -6,7 +6,8 @@ namespace Coders_Back.Domain.DTOs.Output;
 public class LoginOutput
 {
     public bool Success { get; set; }
-    public LoginStatusOutput Status { get; set; }
+    
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public string Token { get; set; }
+    public string? Token { get; set; }
+    public LoginStatusOutput Status { get; set; }
 }
