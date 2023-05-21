@@ -1,21 +1,28 @@
+using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Coders_Back.Domain.DTOs.Input;
 using Coders_Back.Domain.DTOs.Output;
 using Coders_Back.Domain.Entities;
 using Coders_Back.Domain.Enums;
-using Coders_Back.Infrastructure.Identity.Services;
+using Coders_Back.Infrastructure.Extensions;
+using Coders_Back.Infrastructure.Identity.Configurations;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+
+namespace Coders_Back.Infrastructure.Identity.Services;
 
 public class IdentityService : IIdentityService
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
-    //private readonly JwtOptions _jwtOptions;
+    private readonly IOptions<JwtOptions> _jwtOptions;
 
-    public IdentityService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+    public IdentityService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IOptions<JwtOptions> jwtOptions)
     {
         _signInManager = signInManager;
         _userManager = userManager;
-        //_jwtOptions = jwtOptions;
+        _jwtOptions = jwtOptions;
     }
 
     public async Task<RegisterOutput> Register(RegisterInput input)
@@ -43,22 +50,44 @@ public class IdentityService : IIdentityService
         {
             Success = result.Succeeded,
             Token = result.Succeeded ? await GetToken(input.Email) : null,
-            Status = result.Succeeded ? LoginStatusOutput.Success : LoginStatusOutput.Failed
+            LoginError = result.GetSignInResultErrors()
         };
-    }
+    }   
 
     private async Task<string> GetToken(string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
-        return "a";
+        var claims = await GetClaims(user);
+        var expirationTime = DateTime.Now.AddSeconds(_jwtOptions.Value.Expiration); 
+        
+        var jwt = new JwtSecurityToken(
+            issuer: _jwtOptions.Value.Issuer,
+            audience: _jwtOptions.Value.Audience,
+            claims: claims,
+            notBefore: DateTime.Now,
+            expires: expirationTime,
+            signingCredentials: _jwtOptions.Value.SigningCredentials);
+
+        return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
     
-    private async Task<string> GetClaimsAndRoles(ApplicationUser user)
+    private async Task<IList<Claim>> GetClaims(ApplicationUser user)
     {
         var claims = await _userManager.GetClaimsAsync(user);
         var roles = await _userManager.GetRolesAsync(user);
 
-        return Guid.NewGuid().ToString();
+        var dateTimeNow = DateTime.Now.ToString(CultureInfo.InvariantCulture);
+            
+        claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, dateTimeNow));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Iat, dateTimeNow));
+        
+        
+        foreach (var role in roles)
+            claims.Add(new Claim("role", role));
 
+        return claims;
     }
 }

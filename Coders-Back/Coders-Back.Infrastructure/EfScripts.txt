@@ -3,3 +3,6 @@ dotnet ef migrations add <MigtationName> --project Coders-Back.Infrastructure --
 
 // Apply Migration / Update DB
 dotnet ef database update --project Coders-Back.Infrastructure --startup-project Coders-Back.Host --verbose
+
+// Remove migration
+dotnet ef migrations remove --project Coders-Back.Infrastructure --startup-project Coders-Back.Host --verbose
