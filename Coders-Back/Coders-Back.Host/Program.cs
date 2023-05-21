@@ -1,19 +1,22 @@
 using Coders_Back.Domain.Entities;
 using Coders_Back.Infrastructure.EntityFramework.Context;
+using Coders_Back.Infrastructure.Extensions;
 using Coders_Back.Infrastructure.Identity.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;  
 
 // Add services to the container.
+services.AddControllers();
 
-builder.Services.AddControllers();
+services.AddDbContext<AppDbContext>(opts =>
+    opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!));
 
-builder.Services.AddDbContext<AppDbContext>(opts =>
-    opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
@@ -27,6 +30,14 @@ builder.Services.AddScoped<IIdentityService, IdentityService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Host.UseSerilog((_, lc) => lc
+        .MinimumLevel.Information()
+        .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+        .WriteTo.Console());
+}
 
 var app = builder.Build();
 
