@@ -4,6 +4,14 @@ namespace Coders_Back.Domain.DTOs.Input;
 
 public class RegisterInput
 {
+    public RegisterInput(string email, string name, string password, string passwordConfirm)
+    {
+        Email = email;
+        Name = name;
+        Password = password;
+        PasswordConfirm = passwordConfirm;
+    }
+
     [EmailAddress]
     [Required(ErrorMessage = "Email is required")]
     public string Email { get; set; }

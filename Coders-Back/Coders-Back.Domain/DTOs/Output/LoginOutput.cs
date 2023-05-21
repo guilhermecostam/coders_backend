@@ -9,5 +9,7 @@ public class LoginOutput
     
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Token { get; set; }
-    public LoginStatusOutput Status { get; set; }
+    
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public LoginErrorsOutput? LoginError { get; set; }
 }
