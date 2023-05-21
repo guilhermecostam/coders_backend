@@ -29,8 +29,7 @@ public class IdentityService : IIdentityService
     {
         var user = new ApplicationUser
         {
-            Name = input.Name,
-            UserName = input.Email,
+            UserName = input.UserName,
             Email = input.Email,
             EmailConfirmed = true
         };
@@ -45,7 +44,17 @@ public class IdentityService : IIdentityService
 
     public async Task<LoginOutput> Login(LoginInput input)
     {
-        var result = await _signInManager.PasswordSignInAsync(input.Email, input.Password, false, false);
+        var user = await _userManager.FindByEmailAsync(input.Email);
+        if (user is null)
+        {
+            return new LoginOutput
+            {
+                Success = false,
+                Token = null,
+                LoginError = LoginErrorsOutput.InvalidUsernameOrPassword    
+            };
+        }    
+        var result = await _signInManager.PasswordSignInAsync(user, input.Password, false, false);
         return new LoginOutput
         {
             Success = result.Succeeded,
