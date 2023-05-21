@@ -7,9 +7,6 @@ namespace Coders_Back.Domain.Entities;
 public class ApplicationUser : IdentityUser<Guid>, ISoftDelete   
 {
     public override Guid Id { get; set; }
-    // The UserName from IdentityUser is always the same as Email, we must use the Name to handle the username
-    [Required]
-    public string? Name { get; set; }
     public DateTime BirthDate { get; set; }
     public string? GithubProfile { get; set; }
     public Guid AddressId { get; set; }

@@ -4,10 +4,10 @@ namespace Coders_Back.Domain.DTOs.Input;
 
 public class RegisterInput
 {
-    public RegisterInput(string email, string name, string password, string passwordConfirm)
+    public RegisterInput(string email, string userName, string password, string passwordConfirm)
     {
         Email = email;
-        Name = name;
+        UserName = userName;
         Password = password;
         PasswordConfirm = passwordConfirm;
     }
@@ -17,7 +17,7 @@ public class RegisterInput
     public string Email { get; set; }
     
     [Required(ErrorMessage = "Name is required")]
-    public string Name { get; set; }
+    public string UserName { get; set; }
     
     [Required(ErrorMessage = "Password is required")]
     [StringLength(100, ErrorMessage = "Password must be between 6 and 100 characters long", MinimumLength = 6)]

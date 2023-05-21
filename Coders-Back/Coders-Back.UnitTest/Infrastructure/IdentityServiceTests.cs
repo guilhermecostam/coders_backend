@@ -18,13 +18,12 @@ public class IdentityServiceTests
     {
         //TODO: performe all arranges and setups in Utils Class
         //Arrange
-        var registerInput = new RegisterInput("An amazing person", "amazingemail.something", "AInvalidPassword",
+        var registerInput = new RegisterInput("amazingemail.something", "An amazing person", "AInvalidPassword",
             "AInvalidPassword");
         
         var user = new ApplicationUser
         {
-            Name = registerInput.Name,
-            UserName = registerInput.Email,
+            UserName = registerInput.UserName,
             Email = registerInput.Email,
             EmailConfirmed = true
         }; 
@@ -62,7 +61,7 @@ public class IdentityServiceTests
 
         userManagerMock.Verify(m =>
             m.CreateAsync(It.Is<ApplicationUser>(u =>
-                    u.Name!.Equals(user.Name) && u.Email.Equals(user.Email) && u.UserName.Equals(user.UserName) && u.TwoFactorEnabled == user.TwoFactorEnabled),
+                    u.UserName!.Equals(user.UserName) && u.Email.Equals(user.Email) && u.UserName.Equals(user.UserName) && u.TwoFactorEnabled == user.TwoFactorEnabled),
                 It.Is<string>(p => p.Equals(registerInput.Password))), Times.Once);
         
         userManagerMock.Verify(m => 
