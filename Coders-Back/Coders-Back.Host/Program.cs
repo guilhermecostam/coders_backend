@@ -20,9 +20,11 @@ services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+services.AddAuthentication(builder.Configuration);
+
 #region DI
 
-builder.Services.AddScoped<IIdentityService, IdentityService>();
+services.AddScoped<IIdentityService, IdentityService>();
 
 #endregion
 
