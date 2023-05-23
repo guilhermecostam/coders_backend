@@ -67,13 +67,14 @@ public class IdentityService : IIdentityService
     {
         var user = await _userManager.FindByEmailAsync(email);
         var claims = await GetClaims(user);
-        var expirationTime = DateTime.Now.AddSeconds(_jwtOptions.Value.Expiration); 
+        var now = DateTime.Now;
+        var expirationTime = now.AddSeconds(_jwtOptions.Value.Expiration); 
         
         var jwt = new JwtSecurityToken(
             issuer: _jwtOptions.Value.Issuer,
             audience: _jwtOptions.Value.Audience,
             claims: claims,
-            notBefore: DateTime.Now,
+            notBefore: now,
             expires: expirationTime,
             signingCredentials: _jwtOptions.Value.SigningCredentials);
 
