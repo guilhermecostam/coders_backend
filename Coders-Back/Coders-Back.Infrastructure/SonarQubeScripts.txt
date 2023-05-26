@@ -1,0 +1,13 @@
+// Install dotnet tool for SonarQube with this command (it will only be needed the first time):
+dotnet tool install --global dotnet-sonarscanner
+
+// Now, follow this steps in root path of project 
+// First, run this command  :
+sudo dotnet sonarscanner begin /k:"coders_backend" /d:sonar.host.url="YourHostUrl"  /d:sonar.login="YourToken" /d:sonar.dotnet.excludeTestProjects=true
+
+// Then, build your project :
+dotnet build ./Coders-Back
+
+// Finally, run this command :
+dotnet sonarscanner end /d:sonar.login="YourToken" 
+
