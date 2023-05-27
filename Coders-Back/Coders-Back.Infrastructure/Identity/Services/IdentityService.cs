@@ -44,7 +44,7 @@ public class IdentityService : IIdentityService
 
     public async Task<LoginOutput> Login(LoginInput input)
     {
-        var user = await _userManager.FindByEmailAsync(input.Email);
+        var user = await _userManager.FindByEmailAsync(input.Identifier);
         if (user is null)
         {
             return new LoginOutput
@@ -58,7 +58,7 @@ public class IdentityService : IIdentityService
         return new LoginOutput
         {
             Success = result.Succeeded,
-            Token = result.Succeeded ? await GetToken(input.Email) : null,
+            Token = result.Succeeded ? await GetToken(input.Identifier) : null,
             LoginError = result.GetSignInResultErrors()
         };
     }   
