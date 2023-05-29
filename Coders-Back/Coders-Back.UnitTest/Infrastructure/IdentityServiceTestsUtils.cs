@@ -35,7 +35,7 @@ public class IdentityServiceTestsUtils
             EmailConfirmed = true
         };
 
-        LoginInput = new LoginInput(RegisterInput.UserName, RegisterInput.Password);
+        LoginInput = new LoginInput(RegisterInput.Email, RegisterInput.Password);
         
         UserManagerMock = new Mock<UserManager<ApplicationUser>>(
             Mock.Of<IUserStore<ApplicationUser>>(),
