@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Net.Mail;
 using System.ComponentModel.DataAnnotations;
 using Coders_Back.Domain.DTOs.Input;
 using Coders_Back.Domain.DTOs.Output;
@@ -110,21 +109,5 @@ public class IdentityService : IIdentityService
             claims.Add(new Claim("role", role));
 
         return claims;
-    }
-
-    private bool IsValidEmail(string email)
-    {
-        var valid = true;
-
-        try
-        {
-            var addr = new MailAddress(email);
-        }
-        catch
-        {
-            valid = false;
-        }
-
-        return valid;
     }
 }
