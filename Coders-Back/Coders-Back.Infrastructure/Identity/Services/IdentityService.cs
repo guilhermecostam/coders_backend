@@ -45,16 +45,12 @@ public class IdentityService : IIdentityService
 
     public async Task<LoginOutput> Login(LoginInput input)
     {
-        ApplicationUser user = new ApplicationUser();
+        ApplicationUser user;
 
         if (new EmailAddressAttribute().IsValid(input.Identifier))
-        {
             user = await _userManager.FindByEmailAsync(input.Identifier);
-        }
         else
-        {
             user = await _userManager.FindByNameAsync(input.Identifier);
-        }
 
         if (user is null)
         {
@@ -103,8 +99,7 @@ public class IdentityService : IIdentityService
         claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
         claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, dateTimeNow));
         claims.Add(new Claim(JwtRegisteredClaimNames.Iat, dateTimeNow));
-        
-        
+
         foreach (var role in roles)
             claims.Add(new Claim("role", role));
 
