@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.ComponentModel.DataAnnotations;
 using Coders_Back.Domain.DTOs.Input;
 using Coders_Back.Domain.DTOs.Output;
 using Coders_Back.Domain.Entities;
@@ -44,7 +45,13 @@ public class IdentityService : IIdentityService
 
     public async Task<LoginOutput> Login(LoginInput input)
     {
-        var user = await _userManager.FindByEmailAsync(input.Email);
+        ApplicationUser user;
+
+        if (new EmailAddressAttribute().IsValid(input.Identifier))
+            user = await _userManager.FindByEmailAsync(input.Identifier);
+        else
+            user = await _userManager.FindByNameAsync(input.Identifier);
+
         if (user is null)
         {
             return new LoginOutput
@@ -58,14 +65,13 @@ public class IdentityService : IIdentityService
         return new LoginOutput
         {
             Success = result.Succeeded,
-            Token = result.Succeeded ? await GetToken(input.Email) : null,
+            Token = result.Succeeded ? await GetToken(user) : null,
             LoginError = result.GetSignInResultErrors()
         };
     }   
 
-    private async Task<string> GetToken(string email)
+    private async Task<string> GetToken(ApplicationUser user)
     {
-        var user = await _userManager.FindByEmailAsync(email);
         var claims = await GetClaims(user);
         var now = DateTime.Now;
         var expirationTime = now.AddSeconds(_jwtOptions.Value.Expiration); 
@@ -93,8 +99,7 @@ public class IdentityService : IIdentityService
         claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
         claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, dateTimeNow));
         claims.Add(new Claim(JwtRegisteredClaimNames.Iat, dateTimeNow));
-        
-        
+
         foreach (var role in roles)
             claims.Add(new Claim("role", role));
 

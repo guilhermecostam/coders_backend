@@ -4,15 +4,14 @@ namespace Coders_Back.Domain.DTOs.Input;
 
 public class LoginInput
 {
-    public LoginInput(string email, string password)
+    public LoginInput(string identifier, string password)
     {
-        Email = email;
+        Identifier = identifier;
         Password = password;
     }
 
-    [EmailAddress]
-    [Required(ErrorMessage = "Email is required")]
-    public string Email { get; set; }
+    [Required(ErrorMessage = "Email or username is required")]
+    public string Identifier { get; set; }
     
     [Required(ErrorMessage = "Password is required")]
     public string Password { get; set; }

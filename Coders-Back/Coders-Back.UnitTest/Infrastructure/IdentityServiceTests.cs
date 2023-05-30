@@ -76,7 +76,7 @@ public class IdentityServiceTests
         result.LoginError.Should().BeNull();
         
         utils.UserManagerMock.Verify(m => 
-            m.FindByEmailAsync(It.IsAny<string>()), Times.Exactly(2));
+            m.FindByEmailAsync(It.IsAny<string>()), Times.Exactly(1));
         utils.SinInManagerMock.Verify(m => 
             m.PasswordSignInAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Once);
     }
