@@ -9,6 +9,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <SonarQubeSetting Include="sonar.coverage.exclusions">
+            <Value>**/Program.cs</Value>
+        </SonarQubeSetting>
+    </ItemGroup>
+    
+    <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.16">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
