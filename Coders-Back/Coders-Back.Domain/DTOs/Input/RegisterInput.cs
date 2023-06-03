@@ -17,6 +17,10 @@ public class RegisterInput
     public string Email { get; set; }
     
     [Required(ErrorMessage = "Name is required")]
+    public string Name { get; set; }
+    
+    [Required(ErrorMessage = "UserName is required")]
+    [RegularExpression(@"^\S*$", ErrorMessage = "Blank spaces are not allowed")]
     public string UserName { get; set; }
     
     [Required(ErrorMessage = "Password is required")]

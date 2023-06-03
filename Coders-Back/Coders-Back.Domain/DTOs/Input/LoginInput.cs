@@ -11,6 +11,7 @@ public class LoginInput
     }
 
     [Required(ErrorMessage = "Email or username is required")]
+    [RegularExpression(@"^\S*$", ErrorMessage = "Blank spaces are not allowed")]
     public string Identifier { get; set; }
     
     [Required(ErrorMessage = "Password is required")]

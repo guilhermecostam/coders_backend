@@ -5,7 +5,6 @@ namespace Coders_Back.Infrastructure.Extensions;
 
 public static class SignInResultExtensions
 {
-
     public static LoginErrorsOutput? GetSignInResultErrors(this SignInResult result)
     {
         if (result.Succeeded) return null;
