@@ -1,4 +1,5 @@
 using Coders_Back.Domain.Entities;
+using Coders_Back.Host.Services;
 using Coders_Back.Infrastructure.EntityFramework.Context;
 using Coders_Back.Infrastructure.Extensions;
 using Coders_Back.Infrastructure.Identity.Services;
@@ -25,6 +26,7 @@ services.AddAuthentication(builder.Configuration);
 #region DI
 
 services.AddScoped<IIdentityService, IdentityService>();
+services.AddTransient<IProjectService, ProjectService>();
 
 #endregion
 

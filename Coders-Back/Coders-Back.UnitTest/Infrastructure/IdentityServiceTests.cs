@@ -12,9 +12,13 @@ public class IdentityServiceTests
     [Fact(DisplayName = "Try to register user with invalid fields")]
     public async void RegisterInvalidUser()
     {
+        //arrange
+        
+        
         var utils = IdentityServiceTestsUtils.NewUtils(true);
         var identityService = new IdentityService(utils.SinInManagerMock.Object, utils.UserManagerMock.Object,  utils.JwtOptionsMock.Object);
-       
+        
+        //act
         var result = await identityService.Register(utils.RegisterInput);
 
         //Assert

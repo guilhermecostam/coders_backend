@@ -6,5 +6,6 @@ namespace Coders_Back.Infrastructure.EntityFramework.Context;
 
 public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
 {
+    public DbSet<Project> Projects;
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 }
