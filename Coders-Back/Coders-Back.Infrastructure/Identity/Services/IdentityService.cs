@@ -32,7 +32,8 @@ public class IdentityService : IIdentityService
         {
             UserName = input.UserName,
             Email = input.Email,
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            Name = input.Name
         };
 
         var result = await _userManager.CreateAsync(user, input.Password);
