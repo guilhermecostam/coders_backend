@@ -1,4 +1,4 @@
-using Coders_Back.Domain.Entities.Interfaces;
+using Coders_Back.Domain.DataAbstractions;
 using Microsoft.AspNetCore.Identity;
 
 namespace Coders_Back.Domain.Entities;

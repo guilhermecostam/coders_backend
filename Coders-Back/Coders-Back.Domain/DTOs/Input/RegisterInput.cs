@@ -4,12 +4,13 @@ namespace Coders_Back.Domain.DTOs.Input;
 
 public class RegisterInput
 {
-    public RegisterInput(string email, string userName, string password, string passwordConfirm)
+    public RegisterInput(string email, string userName, string password, string passwordConfirm, string name)
     {
         Email = email;
         UserName = userName;
         Password = password;
         PasswordConfirm = passwordConfirm;
+        Name = name;
     }
 
     [EmailAddress]
