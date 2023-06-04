@@ -26,7 +26,7 @@ public class IdentityServiceTestsUtils
     private IdentityServiceTestsUtils(bool createUserMustFail)
     {
         RegisterInput = new RegisterInput("some@email.com", "An_amazing_person", "AInvalidPassword",
-            "AInvalidPassword");
+            "AInvalidPassword", "A Amazing Peron");
         
         User = new ApplicationUser
         {

@@ -14,6 +14,9 @@
     </ItemGroup>
     
     <ItemGroup>
+      <Reference Include="Microsoft.EntityFrameworkCore">
+        <HintPath>..\..\..\..\.nuget\packages\microsoft.entityframeworkcore\6.0.16\lib\net6.0\Microsoft.EntityFrameworkCore.dll</HintPath>
+      </Reference>
       <Reference Include="Microsoft.Extensions.Identity.Stores">
         <HintPath>..\..\..\..\.nuget\packages\microsoft.extensions.identity.stores\6.0.16\lib\net6.0\Microsoft.Extensions.Identity.Stores.dll</HintPath>
       </Reference>
