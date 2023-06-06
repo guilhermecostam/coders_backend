@@ -1,3 +1,6 @@
+// Install dotnet tool for EntityFramework with this command (it will only be needed the first time):
+dotnet tool install --global dotnet-ef
+
 // Add new Migration, note that the parameters that are between <> must be replaced before running
 dotnet ef migrations add <MigtationName> --project ./Coders-Back/Coders-Back.Infrastructure --startup-project ./Coders-Back/Coders-Back.Host --verbose
 
