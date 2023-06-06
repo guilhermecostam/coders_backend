@@ -1,4 +1,4 @@
-namespace Coders_Back.Domain.Entities.Interfaces;
+namespace Coders_Back.Domain.DataAbstractions;
 
 public interface ISoftDelete        
 {

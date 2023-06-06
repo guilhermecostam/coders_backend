@@ -18,10 +18,6 @@ public class AccountController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterInput input)
     {
-        //don't use this because [ApiController] attribute already does that
-        // if (!ModelState.IsValid)
-        //     return BadRequest();
-        
         var registerResult = await _identityService.Register(input);
         
         if (registerResult.Success)

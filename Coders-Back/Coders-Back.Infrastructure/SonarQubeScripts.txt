@@ -1,0 +1,20 @@
+// Install dotnet tool for SonarQube with this command (it will only be needed the first time):
+dotnet tool install --global dotnet-sonarscanner
+
+// Now, follow this steps in root path of project, note that the parameters that are between <> must be replaced before running
+// First, run this command  :
+dotnet sonarscanner begin /k:"coders_backend" /d:sonar.host.url="<YourHostUrl>"  /d:sonar.login="<YourToken>" /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths=coverage.xml
+
+// Then, build your project :
+dotnet build --no-incremental ./Coders-Back
+
+// After this, run the follow command to use Coverlet
+coverlet ./Coders-Back/Coders-Back.UnitTest/bin/Debug/net6.0/Coders-Back.UnitTest.dll --target "dotnet" --targetargs "test ./Coders-Back --no-build" -f=opencover -o="coverage.xml"
+
+// Finally, run this command :
+dotnet sonarscanner end /d:sonar.login="<YourToken>" 
+
+
+//For more info, see documentation :
+https://docs.sonarqube.org/9.7/analyzing-source-code/scanners/sonarscanner-for-dotnet/
+https://docs.sonarqube.org/9.7/analyzing-source-code/test-coverage/dotnet-test-coverage/

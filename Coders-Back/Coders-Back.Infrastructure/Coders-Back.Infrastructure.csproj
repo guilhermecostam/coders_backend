@@ -8,6 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <SonarQubeSetting Include="sonar.coverage.exclusions">
+            <Value>**/Migrations/**, **/Context/**</Value>
+        </SonarQubeSetting>
+    </ItemGroup>
+    
+    <ItemGroup>
       <ProjectReference Include="..\Coders-Back.Domain\Coders-Back.Domain.csproj" />
     </ItemGroup>
 
