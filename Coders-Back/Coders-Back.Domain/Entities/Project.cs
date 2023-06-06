@@ -1,6 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
-using Coders_Back.Domain.Entities.Interfaces;
+using Coders_Back.Domain.DataAbstractions;
 
 namespace Coders_Back.Domain.Entities;
 
