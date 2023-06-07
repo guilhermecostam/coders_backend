@@ -17,7 +17,7 @@ public class Repository <TEntity> : IRepository <TEntity> where TEntity: class {
 
     public DbSet<TEntity> GetDbSet() => _dbSet;
     
-    public IEnumerable<TEntity> GetAll() => _dbSet;
+    public async Task<List<TEntity>> GetAll() => await _dbSet.AsNoTracking().ToListAsync();
     public async Task<TEntity?> GetById(Guid id) => await _dbSet.FindAsync(id);
     
     public async Task Insert(TEntity obj) => await _dbSet.AddAsync(obj);
