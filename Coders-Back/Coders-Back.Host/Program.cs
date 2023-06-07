@@ -1,5 +1,7 @@
 using Coders_Back.Domain.DataAbstractions;
 using Coders_Back.Domain.Entities;
+using Coders_Back.Domain.Interfaces;
+using Coders_Back.Domain.Services;
 using Coders_Back.Infrastructure.DataAbstractions;
 using Coders_Back.Infrastructure.EntityFramework.Context;
 using Coders_Back.Infrastructure.Extensions;
@@ -29,6 +31,8 @@ services.AddAuthentication(builder.Configuration);
 services.AddScoped<IIdentityService, IdentityService>();
 services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+services.AddTransient<IProjectService, ProjectService>();
 
 #endregion
 

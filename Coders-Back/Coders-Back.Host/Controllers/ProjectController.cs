@@ -1,6 +1,7 @@
-using Coders_Back.Infrastructure.EntityFramework.Context;
+using Coders_Back.Domain.DataAbstractions;
+using Coders_Back.Domain.Entities;
+using Coders_Back.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Coders_Back.Host.Controllers;
 
@@ -8,29 +9,23 @@ namespace Coders_Back.Host.Controllers;
 [Route("project")]
 public class ProjectController : ControllerBase
 {
+    private readonly IProjectService _projectService;
+    public ProjectController(IProjectService projectService)
+    {
+        _projectService = projectService;
+    }
+    
     [HttpGet]
-    public async Task<IActionResult> GetAsync(
-        [FromServices] AppDbContext context
-    ){
-        var projects = await context
-            .Projects
-            .AsNoTracking()
-            .ToListAsync();
-
-        return Ok(projects);
+    public async Task<IActionResult> GetAll()
+    {
+        return Ok(await _projectService.GetAll());
     }
 
     [HttpGet]
-    [Route("{id}")]
-    public async Task<IActionResult> GetByIdAsync(
-        [FromServices] AppDbContext context,
-        [FromRoute] Guid id
-    ){
-        var project = await context
-            .Projects
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x=>x.Id == id);
-
-        return project == null ? NotFound() : Ok(project);
+    [Route("{id:guid}")]
+    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
+    {
+        var project = await _projectService.GetById(id);
+        return project is not null ? Ok(project) : NotFound();
     }
 }

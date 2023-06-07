@@ -13,21 +13,15 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     
-    
     #region overrides
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            var softDeleteEntities = typeof(ISoftDelete).Assembly.GetTypes()
-                .Where(type => typeof(ISoftDelete)
-                                   .IsAssignableFrom(type)
-                               && type.IsClass
-                               && !type.IsAbstract);
+            AddIsDeletedQueryFilter(builder);
 
-            foreach (var softDeleteEntity in softDeleteEntities)
-            {
-                builder.Entity(softDeleteEntity).HasQueryFilter(SoftDeleteQueryFilterLambda(softDeleteEntity));
-            }
+            builder.Entity<Project>().Property(p => p.OwnerId).IsRequired();
+            builder.Entity<Project>().Property(p => p.Name).IsRequired();
+            
             base.OnModelCreating(builder);
         }
 
@@ -61,5 +55,19 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         var propertyAccess = Expression.PropertyOrField(parameter, nameof(ISoftDelete.IsDeleted));
         var equalExpression = Expression.Equal(propertyAccess, falseConstantValue);
         return Expression.Lambda(equalExpression, parameter);
+    }
+
+    private static void AddIsDeletedQueryFilter(ModelBuilder builder)
+    {
+        var softDeleteEntities = typeof(ISoftDelete).Assembly.GetTypes()
+            .Where(type => typeof(ISoftDelete)
+                               .IsAssignableFrom(type)
+                           && type.IsClass
+                           && !type.IsAbstract);
+
+        foreach (var softDeleteEntity in softDeleteEntities)
+        {
+            builder.Entity(softDeleteEntity).HasQueryFilter(SoftDeleteQueryFilterLambda(softDeleteEntity));
+        }
     }
 }

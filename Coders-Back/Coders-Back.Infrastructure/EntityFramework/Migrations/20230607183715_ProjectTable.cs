@@ -16,9 +16,9 @@ namespace Coders_Back.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LinkGithub = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GithubUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LinkDiscord = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DiscordUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateCreation = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
