@@ -41,4 +41,18 @@ public class ProjectService : IProjectService
         
         return new ProjectOutput(project);
     }
+
+    public async void Update(Guid projectId)
+    {
+        var project = await _projects.GetById(projectId);
+
+        await _projects.Update(project);
+    }
+
+    public async void Delete(Guid projectId)
+    {
+        var project = await _projects.GetById(projectId);
+
+        await _projects.Update(project);
+    }
 }

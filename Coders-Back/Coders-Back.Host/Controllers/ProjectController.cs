@@ -34,15 +34,47 @@ public class ProjectController : ControllerBase
     public async Task<IActionResult> CreateAsync(
         [FromBody] ProjectInput projectInput
     ){
-        if(!ModelState.IsValid){
-            return BadRequest();
-        }
-
         try
         {
             var project = await _projectService.Create(projectInput);
 
             return Created($"project/{project.Id}", project);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest();
+        }
+    }
+
+    [HttpPut]
+    [Route("{id:guid}")]
+    public async Task<IActionResult> UpdateAsync(
+        [FromRoute] Guid id
+    ){
+        try
+        {
+            await _projectService.Update(id);
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest();
+        }
+    }
+
+    [HttpDelete]
+    [Route("{id:guid}")]
+    public async Task<IActionResult> DeleteAsync(
+        [FromRoute] Guid id
+    ){
+        try
+        {
+            await _projectService.Delete(id);
+
+            return Ok();
         }
         catch (Exception e)
         {

@@ -9,4 +9,6 @@ public interface IProjectService
     Task<List<ProjectOutput>> GetAll();
     Task<ProjectOutput?> GetById(Guid projectId);
     Task<ProjectOutput> Create(ProjectInput projectInput);
+    void Update(Guid projectId);
+    void Delete(Guid projectId);
 }
