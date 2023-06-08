@@ -11,6 +11,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 {
     public DbSet<Project> Projects { get; set;}
     public DbSet<Collaborator> Collaborators { get; set;}
+    public DbSet<ProjectJoinRequest> ProjectJoinRequests { get; set;}
     
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     
@@ -25,6 +26,15 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             
             builder.Entity<Collaborator>().Property(c => c.UserId).IsRequired();
             builder.Entity<Collaborator>().Property(c => c.ProjectId).IsRequired();
+            builder.Entity<Collaborator>()
+                .HasIndex(c => new { c.UserId, c.ProjectId })
+                .IsUnique();
+
+            builder.Entity<ProjectJoinRequest>().Property(r => r.ProjectId).IsRequired();
+            builder.Entity<ProjectJoinRequest>().Property(r => r.UserId).IsRequired();
+            builder.Entity<ProjectJoinRequest>()
+                .HasIndex(r => new { r.UserId, r.ProjectId })
+                .IsUnique();
 
             base.OnModelCreating(builder);
         }
