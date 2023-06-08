@@ -3,7 +3,7 @@ dotnet tool install --global dotnet-sonarscanner
 
 // Now, follow this steps in root path of project, note that the parameters that are between <> must be replaced before running
 // First, run this command  :
-dotnet sonarscanner begin /k:"coders_backend" /d:sonar.host.url="<YourHostUrl>"  /d:sonar.login="<YourToken>" /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths=coverage.xml
+dotnet sonarscanner begin /k:"coders_backend" /n:"coders_backend" /d:sonar.host.url="<YourHostUrl>"  /d:sonar.login="<YourToken>" /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths=coverage.xml
 
 // Then, build your project :
 dotnet build --no-incremental ./Coders-Back
