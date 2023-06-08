@@ -1,4 +1,5 @@
 using Coders_Back.Domain.DataAbstractions;
+using Coders_Back.Domain.DTOs.Input;
 using Coders_Back.Domain.DTOs.Output;
 using Coders_Back.Domain.Entities;
 using Coders_Back.Domain.Interfaces;
@@ -24,5 +25,20 @@ public class ProjectService : IProjectService
     {
         var project = await _projects.GetById(projectId);
         return project is null ? null : new ProjectOutput(project);
+    }
+
+    public async Task<ProjectOutput> Create(ProjectInput projectInput)
+    {
+        var project = new Project{
+            Name = projectInput.Name,
+            Description = projectInput.Description,
+            GithubUrl = projectInput.GithubUrl,
+            DiscordUrl = projectInput.DiscordUrl,
+            //OwnerId = pega_id_user_logado
+        };
+
+        await _projects.Insert(project);
+        
+        return new ProjectOutput(project);
     }
 }
