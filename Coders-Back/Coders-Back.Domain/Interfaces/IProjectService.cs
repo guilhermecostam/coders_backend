@@ -1,5 +1,4 @@
 using Coders_Back.Domain.DTOs.Output;
-using Coders_Back.Domain.Entities;
 
 namespace Coders_Back.Domain.Interfaces;
 
