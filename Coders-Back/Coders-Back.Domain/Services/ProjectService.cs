@@ -12,7 +12,7 @@ public class ProjectService : IProjectService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<Collaborator> _collaborators;
     
-    public ProjectService(IRepository<Project> projects, IRepository<Collaborator> collaborators)
+    public ProjectService(IRepository<Project> projects, IRepository<Collaborator> collaborators, IUnitOfWork unitOfWork)
     {
         _projects = projects;
         _collaborators = collaborators;
