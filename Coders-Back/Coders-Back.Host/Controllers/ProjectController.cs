@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Coders_Back.Domain.Extensions;
 using Coders_Back.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Coders_Back.Domain.DTOs.Input;
 
 namespace Coders_Back.Host.Controllers;
 
@@ -11,6 +12,7 @@ public class ProjectController : ControllerBase
 {
     private readonly IProjectService _projectService;
     private readonly IRequestService _requestService;
+    
     public ProjectController(IProjectService projectService, IRequestService requestService)
     {
         _projectService = projectService;
@@ -28,6 +30,38 @@ public class ProjectController : ControllerBase
     {
         var project = await _projectService.GetById(id);
         return project is not null ? Ok(project) : NotFound();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateAsync(
+        [FromBody] ProjectInput projectInput
+    ){
+        try
+        {
+            var project = await _projectService.Create(projectInput);
+            return Created($"project/{project.Id}", project);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest();
+        }
+    }
+
+    [HttpPut]
+    [Route("{id:guid}")]
+    public async Task<IActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] ProjectInput input)
+    {
+        var success = await _projectService.Update(id);
+        return success ? NoContent() : BadRequest();
+    }
+
+    [HttpDelete]
+    [Route("{id:guid}")]
+    public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
+    {
+        var success = await _projectService.Delete(id);
+        return success ? NoContent() : BadRequest();
     }
     
     [HttpGet]

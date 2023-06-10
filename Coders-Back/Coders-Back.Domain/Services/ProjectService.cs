@@ -1,4 +1,5 @@
 using Coders_Back.Domain.DataAbstractions;
+using Coders_Back.Domain.DTOs.Input;
 using Coders_Back.Domain.DTOs.Output;
 using Coders_Back.Domain.Entities;
 using Coders_Back.Domain.Interfaces;
@@ -32,6 +33,39 @@ public class ProjectService : IProjectService
     {
         var project = await _projects.GetById(projectId);
         return project is null ? null : new ProjectOutput(project);
+    }
+
+    public async Task<ProjectOutput> Create(ProjectInput projectInput)
+    {
+        var project = new Project{
+            Name = projectInput.Name,
+            Description = projectInput.Description,
+            GithubUrl = projectInput.GithubUrl,
+            DiscordUrl = projectInput.DiscordUrl,
+            //TODO: OwnerId = pega_id_user_logado
+        };
+
+        await _projects.Insert(project);
+        
+        return new ProjectOutput(project);
+    }
+
+    public async Task<bool> Update(Guid projectId)
+    {
+        var project = await _projects.GetById(projectId);
+        if (project is null) return false;
+        _projects.Update(project);
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> Delete(Guid projectId)
+    {
+        var project = await _projects.GetById(projectId);
+        if (project is null) return false;
+        await _projects.Delete(projectId);
+        await _unitOfWork.SaveChangesAsync();
+        return true;
     }
 
     public async Task<List<CollaboratorOutput>> GetCollaboratorsByProject(Guid projectId)
