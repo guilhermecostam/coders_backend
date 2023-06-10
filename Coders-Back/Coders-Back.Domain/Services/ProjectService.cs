@@ -9,10 +9,12 @@ namespace Coders_Back.Domain.Services;
 public class ProjectService : IProjectService
 {
     private readonly IRepository<Project> _projects;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public ProjectService(IRepository<Project> projects)
+    public ProjectService(IRepository<Project> projects, IUnitOfWork unitOfWork)
     {
         _projects = projects;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<List<ProjectOutput>> GetAll()
@@ -34,7 +36,7 @@ public class ProjectService : IProjectService
             Description = projectInput.Description,
             GithubUrl = projectInput.GithubUrl,
             DiscordUrl = projectInput.DiscordUrl,
-            //OwnerId = pega_id_user_logado
+            //TODO: OwnerId = pega_id_user_logado
         };
 
         await _projects.Insert(project);
@@ -42,17 +44,21 @@ public class ProjectService : IProjectService
         return new ProjectOutput(project);
     }
 
-    public async void Update(Guid projectId)
+    public async Task<bool> Update(Guid projectId)
     {
         var project = await _projects.GetById(projectId);
-
-        await _projects.Update(project);
+        if (project is null) return false;
+        _projects.Update(project);
+        await _unitOfWork.SaveChangesAsync();
+        return true;
     }
 
-    public async void Delete(Guid projectId)
+    public async Task<bool> Delete(Guid projectId)
     {
         var project = await _projects.GetById(projectId);
-
-        await _projects.Update(project);
+        if (project is null) return false;
+        await _projects.Delete(projectId);
+        await _unitOfWork.SaveChangesAsync();
+        return true;
     }
 }

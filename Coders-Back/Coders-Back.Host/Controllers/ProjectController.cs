@@ -1,5 +1,3 @@
-using Coders_Back.Domain.DataAbstractions;
-using Coders_Back.Domain.Entities;
 using Coders_Back.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Coders_Back.Domain.DTOs.Input;
@@ -37,7 +35,6 @@ public class ProjectController : ControllerBase
         try
         {
             var project = await _projectService.Create(projectInput);
-
             return Created($"project/{project.Id}", project);
         }
         catch (Exception e)
@@ -49,37 +46,17 @@ public class ProjectController : ControllerBase
 
     [HttpPut]
     [Route("{id:guid}")]
-    public async Task<IActionResult> UpdateAsync(
-        [FromRoute] Guid id
-    ){
-        try
-        {
-            await _projectService.Update(id);
-
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return BadRequest();
-        }
+    public async Task<IActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] ProjectInput input)
+    {
+        var success = await _projectService.Update(id);
+        return success ? NoContent() : BadRequest();
     }
 
     [HttpDelete]
     [Route("{id:guid}")]
-    public async Task<IActionResult> DeleteAsync(
-        [FromRoute] Guid id
-    ){
-        try
-        {
-            await _projectService.Delete(id);
-
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return BadRequest();
-        }
+    public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
+    {
+        var success = await _projectService.Delete(id);
+        return success ? NoContent() : BadRequest();
     }
 }
