@@ -1,4 +1,5 @@
 using Coders_Back.Domain.DataAbstractions;
+using Coders_Back.Domain.DTOs.Input;
 using Coders_Back.Domain.DTOs.Output;
 using Coders_Back.Domain.Entities;
 using Coders_Back.Domain.Interfaces;
@@ -6,14 +7,16 @@ using Coders_Back.Domain.Interfaces;
 namespace Coders_Back.Domain.Services;
 
 public class ProjectService : IProjectService
-{   
+{
     private readonly IRepository<Project> _projects;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<Collaborator> _collaborators;
     
-    public ProjectService(IRepository<Project> projects, IRepository<Collaborator> collaborators)
+    public ProjectService(IRepository<Project> projects, IRepository<Collaborator> collaborators, IUnitOfWork unitOfWork)
     {
         _projects = projects;
         _collaborators = collaborators;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<List<ProjectOutput>> GetAll()
@@ -26,6 +29,39 @@ public class ProjectService : IProjectService
     {
         var project = await _projects.GetById(projectId);
         return project is null ? null : new ProjectOutput(project);
+    }
+
+    public async Task<ProjectOutput> Create(ProjectInput projectInput)
+    {
+        var project = new Project{
+            Name = projectInput.Name,
+            Description = projectInput.Description,
+            GithubUrl = projectInput.GithubUrl,
+            DiscordUrl = projectInput.DiscordUrl,
+            //TODO: OwnerId = pega_id_user_logado
+        };
+
+        await _projects.Insert(project);
+        
+        return new ProjectOutput(project);
+    }
+
+    public async Task<bool> Update(Guid projectId)
+    {
+        var project = await _projects.GetById(projectId);
+        if (project is null) return false;
+        _projects.Update(project);
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> Delete(Guid projectId)
+    {
+        var project = await _projects.GetById(projectId);
+        if (project is null) return false;
+        await _projects.Delete(projectId);
+        await _unitOfWork.SaveChangesAsync();
+        return true;
     }
 
     public async Task<List<CollaboratorOutput>> GetCollaboratorsByProject(Guid projectId)
