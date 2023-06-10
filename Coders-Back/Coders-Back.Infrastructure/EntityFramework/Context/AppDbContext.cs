@@ -10,6 +10,7 @@ namespace Coders_Back.Infrastructure.EntityFramework.Context;
 public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
 {
     public DbSet<Project> Projects { get; set;}
+    public DbSet<Collaborator> Collaborators { get; set;}
     
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     
@@ -22,6 +23,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             builder.Entity<Project>().Property(p => p.OwnerId).IsRequired();
             builder.Entity<Project>().Property(p => p.Name).IsRequired();
             
+            builder.Entity<Collaborator>().Property(c => c.UserId).IsRequired();
+            builder.Entity<Collaborator>().Property(c => c.ProjectId).IsRequired();
+
             base.OnModelCreating(builder);
         }
 
@@ -62,8 +66,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         var softDeleteEntities = typeof(ISoftDelete).Assembly.GetTypes()
             .Where(type => typeof(ISoftDelete)
                                .IsAssignableFrom(type)
-                           && type.IsClass
-                           && !type.IsAbstract);
+                           && type is { IsClass: true, IsAbstract: false });
 
         foreach (var softDeleteEntity in softDeleteEntities)
         {
