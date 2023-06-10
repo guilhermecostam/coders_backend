@@ -8,6 +8,7 @@ using Coders_Back.Infrastructure.Extensions;
 using Coders_Back.Infrastructure.Identity.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
 
@@ -39,15 +40,37 @@ services.AddTransient<IProjectService, ProjectService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-if (builder.Environment.IsDevelopment())
+builder.Services.AddSwaggerGen(c =>
 {
-    builder.Host.UseSerilog((_, lc) => lc
-        .MinimumLevel.Information()
-        .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
-        .WriteTo.Console());
-}
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme() 
+    { 
+        Name = "Authorization", 
+        Type = SecuritySchemeType.ApiKey, 
+        Scheme = "Bearer", 
+        BearerFormat = "JWT", 
+        In = ParameterLocation.Header, 
+        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.Example: Bearer 12345abcdef", 
+    }); 
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement 
+    { 
+        { 
+            new OpenApiSecurityScheme 
+            { 
+                Reference = new OpenApiReference 
+                { 
+                    Type = ReferenceType.SecurityScheme, 
+                    Id = "Bearer" 
+                } 
+            }, 
+            new string[] {} 
+        } 
+    }); 
+});
+
+builder.Host.UseSerilog((_, lc) => lc
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+    .WriteTo.Console());
 
 var app = builder.Build();
 

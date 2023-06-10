@@ -9,14 +9,18 @@ namespace Coders_Back.Domain.Services;
 public class ProjectService : IProjectService
 {
     private readonly IRepository<Project> _projects;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IRepository<ProjectJoinRequest> _requests;
+    private readonly IRepository<ApplicationUser> _users;
     private readonly IRepository<Collaborator> _collaborators;
-    
-    public ProjectService(IRepository<Project> projects, IRepository<Collaborator> collaborators, IUnitOfWork unitOfWork)
+    private readonly IUnitOfWork _unitOfWork;
+
+    public ProjectService(IRepository<Project> projects, IRepository<ProjectJoinRequest> requests, IRepository<ApplicationUser> users, IUnitOfWork unitOfWork, IRepository<Collaborator> collaborators)
     {
         _projects = projects;
-        _collaborators = collaborators;
+        _requests = requests;
+        _users = users;
         _unitOfWork = unitOfWork;
+        _collaborators = collaborators;
     }
 
     public async Task<List<ProjectOutput>> GetAll()
@@ -93,6 +97,7 @@ public class ProjectService : IProjectService
         if (project!.OwnerId == userId)
         {
             _collaborators.Delete(collaborator);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }
