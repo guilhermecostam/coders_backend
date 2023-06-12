@@ -17,17 +17,33 @@ public class RequestController : ControllerBase
         _requestService = requestService;
     }
 
-    [HttpPost("{projectId:guid}/accept")]
-    public async Task<IActionResult> Accept([FromRoute] Guid projectId)
+    [HttpPost("{requestId:guid}/accept")]
+    public async Task<IActionResult> Accept([FromRoute] Guid requestId)
     {
-        var result = await _requestService.Accept(projectId, User.GetUserId()!.Value);
+        var result = await _requestService.Accept(requestId, User.GetCurrentUserId()!.Value);
         return result ? Ok() : BadRequest();
     }
     
-    [HttpPost("{projectId:guid}/reject")]
-    public async Task<IActionResult> Reject([FromRoute] Guid projectId)
+    [HttpPost("{requestId:guid}/reject")]
+    public async Task<IActionResult> Reject([FromRoute] Guid requestId)
     {
-        var result = await _requestService.Reject(projectId, User.GetUserId()!.Value);
+        var result = await _requestService.Reject(requestId, User.GetCurrentUserId()!.Value);
         return result ? Ok() : BadRequest();
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetMyRequests()
+    {
+        var userId = User.GetCurrentUserId();
+        var requestOutputs = await _requestService.GetByUser(userId!.Value);
+        return Ok(requestOutputs);
+    }
+    
+    [HttpGet("pending")]
+    public async Task<IActionResult> GetPendingRequests()
+    {
+        var userId = User.GetCurrentUserId();
+        var requestOutputs = await _requestService.GetPendingByUser(userId!.Value);
+        return Ok(requestOutputs);
     }
 }

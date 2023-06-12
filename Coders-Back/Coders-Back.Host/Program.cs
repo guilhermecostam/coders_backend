@@ -34,9 +34,9 @@ services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 services.AddTransient<IProjectService, ProjectService>();
+services.AddTransient<IRequestService, RequestService>();
 
 #endregion
-
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

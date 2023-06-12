@@ -35,31 +35,44 @@ public class ProjectService : IProjectService
         return project is null ? null : new ProjectOutput(project);
     }
 
-    public async Task<ProjectOutput> Create(ProjectInput projectInput)
+    public async Task<ProjectOutput> CreateProject(ProjectInput projectInput, Guid ownerId)
     {
         var project = new Project{
             Name = projectInput.Name,
             Description = projectInput.Description,
             GithubUrl = projectInput.GithubUrl,
             DiscordUrl = projectInput.DiscordUrl,
-            //TODO: OwnerId = pega_id_user_logado
+            OwnerId = ownerId
         };
 
         await _projects.Insert(project);
+        await _collaborators.Insert(new Collaborator
+        {
+            UserId = ownerId,
+            ProjectId = project.Id
+        });
+
+        await _unitOfWork.SaveChangesAsync();
         
         return new ProjectOutput(project);
     }
 
-    public async Task<bool> Update(Guid projectId)
+    public async Task<bool> UpdateProject(Guid id, ProjectInput input)
     {
-        var project = await _projects.GetById(projectId);
+        var project = await _projects.GetById(id);
         if (project is null) return false;
+
+        project.GithubUrl = input.GithubUrl;
+        project.Description = input.Description;
+        project.DiscordUrl = input.DiscordUrl;
+        project.Name = input.Name;
+            
         _projects.Update(project);
         await _unitOfWork.SaveChangesAsync();
         return true;
     }
 
-    public async Task<bool> Delete(Guid projectId)
+    public async Task<bool> DeleteProject(Guid projectId)
     {
         var project = await _projects.GetById(projectId);
         if (project is null) return false;
@@ -68,7 +81,7 @@ public class ProjectService : IProjectService
         return true;
     }
 
-    public async Task<List<CollaboratorOutput>> GetCollaboratorsByProject(Guid projectId)
+    public async Task<List<CollaboratorOutput>?> GetCollaboratorsByProject(Guid projectId)
     {
         var project = await _projects.GetById(projectId);
 
@@ -88,6 +101,7 @@ public class ProjectService : IProjectService
 
     public async Task DeleteCollaborator(Guid collaboratorId, Guid userId)
     {
+        //TODO : block delete owner collaborator !! 
         var collaborator = await _collaborators.GetById(collaboratorId);
         if (collaborator != null) return;
         
@@ -99,5 +113,12 @@ public class ProjectService : IProjectService
             _collaborators.Delete(collaborator);
             await _unitOfWork.SaveChangesAsync();
         }
+    }
+    
+    public async Task<bool> IsProjectOwner(Guid userId, Guid projectId)
+    {
+        var project = await _projects.GetById(projectId);
+        if (project is null) return false;
+        return project.OwnerId == userId;
     }
 }

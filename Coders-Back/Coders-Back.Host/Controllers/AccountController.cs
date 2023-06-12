@@ -19,10 +19,8 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterInput input)
     {
         var registerResult = await _identityService.Register(input);
-        
         if (registerResult.Success)
             return Ok(registerResult);
-
         return BadRequest(registerResult);
     }
     

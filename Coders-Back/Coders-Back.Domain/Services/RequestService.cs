@@ -12,14 +12,16 @@ public class RequestService : IRequestService
     private readonly IRepository<Project> _projects;
     private readonly IRepository<ProjectJoinRequest> _requests;
     private readonly IRepository<Collaborator> _collaborators;
+    private readonly IProjectService _projectService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public RequestService(IRepository<Project> projects, IRepository<ProjectJoinRequest> requests, IUnitOfWork unitOfWork, IRepository<Collaborator> collaborators)
+    public RequestService(IRepository<Project> projects, IRepository<ProjectJoinRequest> requests, IUnitOfWork unitOfWork, IRepository<Collaborator> collaborators, IProjectService projectService)
     {
         _projects = projects;
         _requests = requests;
         _unitOfWork = unitOfWork;
         _collaborators = collaborators;
+        _projectService = projectService;
     }
 
     public async Task<ProjectJoinRequestCreateOutput> Create(Guid projectId, Guid userId)
@@ -75,6 +77,18 @@ public class RequestService : IRequestService
         return await requests.ToListAsync();
     }
 
+    public async Task<List<ProjectJoinRequestOutput>> GetPendingByUser(Guid userId)
+    {
+        var requestDbSet = _requests.GetDbSet();
+        var projectDbSet = _projects.GetDbSet();
+
+        var userProjects = await projectDbSet.Where(p => p.OwnerId == userId).Select(p => p.Id).ToListAsync();
+        var pendingRequests = await requestDbSet.Where(r =>
+                userProjects.Contains(r.ProjectId) && r.Status == RequestStatus.Open)
+            .Select(r => new ProjectJoinRequestOutput(r)).ToListAsync();
+        return pendingRequests;
+    }
+
     public async Task<List<ProjectJoinRequestOutput>> GetByProject(Guid projectId)
     {
         var requestDbSet = _requests.GetDbSet();
@@ -83,12 +97,13 @@ public class RequestService : IRequestService
         return await requests.ToListAsync();
     }
 
-    public async Task<bool> Reject(Guid requestId, Guid userId)
+    public async Task<bool> Reject(Guid requestId, Guid currentUserId)
     {
         var request = await _requests.GetById(requestId);
         if (request is null) return false;
         
-        if (!await CheckUserIsOwner(userId, request)) return false;
+        var isOwner = await _projectService.IsProjectOwner(currentUserId, request.ProjectId);
+        if (!isOwner) return false;
         
         request.Status = RequestStatus.Rejected;
         _requests.Update(request);
@@ -96,12 +111,13 @@ public class RequestService : IRequestService
         return true;
     }
 
-    public async Task<bool> Accept(Guid requestId, Guid userId)
+    public async Task<bool> Accept(Guid requestId, Guid currentUserId)
     {
         var request = await _requests.GetById(requestId);
         if (request is null) return false;
 
-        if (!await CheckUserIsOwner(userId, request)) return false;
+        var isOwner = await _projectService.IsProjectOwner(currentUserId, request.ProjectId);
+        if (!isOwner) return false;
             
         request.Status = RequestStatus.Accepted;
         _requests.Update(request);
@@ -114,13 +130,5 @@ public class RequestService : IRequestService
         });
         await _unitOfWork.SaveChangesAsync();
         return true;
-    }
-    
-    private async Task<bool> CheckUserIsOwner(Guid userId, ProjectJoinRequest request)
-    {
-        //TODO: create a new extension for it
-        var project = await _projects.GetById(request.ProjectId);
-        if (project is null) return false;
-        return project.OwnerId == userId;
     }
 }
