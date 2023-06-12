@@ -16,8 +16,10 @@ public class ProjectInput
     public string Name { get; set; }
 
     public string Description { get; set; }
-
+    
+    //TODO: block to be a valid url
     public string GithubUrl { get; set; }
-
+    
+    //TODO: block to be a valid url
     public string DiscordUrl { get; set; }
 }

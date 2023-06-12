@@ -6,7 +6,8 @@ public interface IRequestService
 {
     Task<ProjectJoinRequestCreateOutput> Create(Guid projectId, Guid userId);
     Task<List<ProjectJoinRequestOutput>> GetByUser(Guid userId);
+    Task<List<ProjectJoinRequestOutput>> GetPendingByUser(Guid userId);
     Task<List<ProjectJoinRequestOutput>> GetByProject(Guid projectId);
-    Task<bool> Reject(Guid requestId, Guid userId);
-    Task<bool> Accept(Guid requestId, Guid userId);
+    Task<bool> Reject(Guid requestId, Guid currentUserId);
+    Task<bool> Accept(Guid requestId, Guid currentUserId);
 }

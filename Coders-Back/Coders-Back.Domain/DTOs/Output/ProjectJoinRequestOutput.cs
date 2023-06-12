@@ -15,10 +15,12 @@ public class ProjectJoinRequestOutput
         ProjectId = input.ProjectId;
         UserId = input.UserId;
         Status = input.Status;
+        CreationTime = input.CreationTime;
     }
     
     public Guid Id { get; set; }
     public RequestStatus Status { get; set; }
     public Guid UserId { get; set; }
+    public DateTime CreationTime { get; set; }
     public Guid ProjectId { get; set; }
 }
