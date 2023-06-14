@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Coders_Back.Domain.DataAbstractions;
 
 namespace Coders_Back.Domain.Entities;
@@ -12,4 +13,7 @@ public class Project : IEntity, ISoftDelete
     public string? DiscordUrl { get; set; }
     public DateTime DateCreation { get; set; } = DateTime.Now;
     public bool IsDeleted { get; set; }
+    
+    [NotMapped]
+    public List<string>? Technologies { get; set; }
 }

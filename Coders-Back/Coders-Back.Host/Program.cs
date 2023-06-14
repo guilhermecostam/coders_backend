@@ -1,5 +1,6 @@
 using Coders_Back.Domain.DataAbstractions;
 using Coders_Back.Domain.Entities;
+using Coders_Back.Domain.ExternalServices;
 using Coders_Back.Domain.Interfaces;
 using Coders_Back.Domain.Services;
 using Coders_Back.Infrastructure.DataAbstractions;
@@ -26,6 +27,7 @@ services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddDefaultTokenProviders();
 
 services.AddAuthentication(builder.Configuration);
+services.AddMemoryCache();
 
 #region DI
 
@@ -35,6 +37,7 @@ services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 services.AddTransient<IProjectService, ProjectService>();
 services.AddTransient<IRequestService, RequestService>();
+services.AddTransient<IGithubApi, GithubApi>();
 
 #endregion
 

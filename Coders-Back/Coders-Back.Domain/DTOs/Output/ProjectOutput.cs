@@ -16,6 +16,7 @@ public class ProjectOutput
         GithubUrl = input.GithubUrl;
         OwnerId = input.OwnerId;
         DiscordUrl = input.DiscordUrl;
+        Technologies = input.Technologies;
     }
     
     public Guid Id { get; set; }
@@ -24,4 +25,6 @@ public class ProjectOutput
     public string? GithubUrl { get; set; }
     public Guid OwnerId { get; set; }
     public string? DiscordUrl { get; set; }
+    
+    public List<string>? Technologies { get; set; }
 }
