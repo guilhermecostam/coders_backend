@@ -11,6 +11,7 @@
 
     <ItemGroup>
         <PackageReference Include="FluentAssertions" Version="6.11.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.18" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
         <PackageReference Include="Moq" Version="4.18.4" />
         <PackageReference Include="xunit" Version="2.4.1" />
@@ -27,6 +28,10 @@
     <ItemGroup>
       <ProjectReference Include="..\Coders-Back.Domain\Coders-Back.Domain.csproj" />
       <ProjectReference Include="..\Coders-Back.Infrastructure\Coders-Back.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Domain\Utils\" />
     </ItemGroup>
 
 </Project>
