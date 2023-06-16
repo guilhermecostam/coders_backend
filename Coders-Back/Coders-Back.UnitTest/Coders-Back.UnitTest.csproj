@@ -30,8 +30,4 @@
       <ProjectReference Include="..\Coders-Back.Infrastructure\Coders-Back.Infrastructure.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Domain\Utils\" />
-    </ItemGroup>
-
 </Project>
