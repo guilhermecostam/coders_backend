@@ -32,11 +32,7 @@ public class ProjectService : IProjectService
         var projectsDbSet = _projects.GetDbSet();
         var query = from project in projectsDbSet
             join user in usersDbSet on project.OwnerId equals user.Id
-            select new
-            {
-                project,
-                userGhName = user.GithubProfile
-            };
+            select new { project, userGhName = user.GithubProfile };
         var projects = await query.ToListAsync();
         return projects.Select( async projectAndName =>
         {
@@ -148,6 +144,7 @@ public class ProjectService : IProjectService
     {
         if (string.IsNullOrEmpty(repoUrl)) return null;
         var url = repoUrl.Split('/');
+        // TODO: can use ownerGh to confirm find project name
         return url[^1];
     }
 }
