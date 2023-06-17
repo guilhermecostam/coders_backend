@@ -1,27 +1,24 @@
 using Coders_Back.Domain.DataAbstractions;
 using Coders_Back.Domain.Entities;
-using Coders_Back.Domain.Enums;
 using Coders_Back.Domain.Interfaces;
 using Moq;
 
 namespace Coders_Back.UnitTest.Domain.Utils;
 
-public class RequestServiceTestsUtils : UnitTestBaseUtils
+public class ProjectServiceTestsUtils : UnitTestBaseUtils
 {
-    public IRepository<ProjectJoinRequest> RequestsRepo { get; set; }
     public IRepository<Project> ProjectsRepo { get; set; }
     public IRepository<ApplicationUser> UsersRepo { get; set; }
     public IRepository<Collaborator> CollaboratorsRepo { get; set; }
     public IUnitOfWork UnitOfWork { get; set; }
-    public Mock<IProjectService> ProjectServiceMock { get; set; }
+    public Mock<IGithubApi> GithubApiMock { get; set; }
     public List<Project> Projects { get; set; }
     public List<ApplicationUser> Users { get; set; }
     public List<Collaborator> Collaborators { get; set; }
-    public List<ProjectJoinRequest> Requests { get; set; }
 
-    public static async Task<RequestServiceTestsUtils> NewUtils()
+    public static async Task<ProjectServiceTestsUtils> NewUtils()
     {
-        var utils = new RequestServiceTestsUtils();
+        var utils = new ProjectServiceTestsUtils();
         
         var usersDbSet = utils.UsersRepo.GetDbSet();
         await usersDbSet.AddRangeAsync(utils.Users);
@@ -32,24 +29,26 @@ public class RequestServiceTestsUtils : UnitTestBaseUtils
         var collaboratorsDbSet = utils.CollaboratorsRepo.GetDbSet();
         await collaboratorsDbSet.AddRangeAsync(utils.Collaborators);
         
-        var requestsDbSet = utils.RequestsRepo.GetDbSet();
-        await requestsDbSet.AddRangeAsync(utils.Requests);
-        
         await utils.UnitOfWork.SaveChangesAsync();
         
         return utils;
     }
 
-    private RequestServiceTestsUtils()
+    private ProjectServiceTestsUtils()
     {
         UnitOfWork = GetInMemoryUnitOfWork();
-        RequestsRepo = GetInMemoryRepository<ProjectJoinRequest>();
         ProjectsRepo = GetInMemoryRepository<Project>();
         UsersRepo = GetInMemoryRepository<ApplicationUser>();
         CollaboratorsRepo = GetInMemoryRepository<Collaborator>();
-        ProjectServiceMock = new Mock<IProjectService>();
-        ProjectServiceMock.Setup(m => 
-            m.IsProjectOwner(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(true);
+        
+        GithubApiMock = new Mock<IGithubApi>();
+        GithubApiMock.Setup(m => m.GetTechnologiesByProject(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<string>
+        {
+            "Cobol",
+            "C",
+            "Fortran",
+            "Portugol"
+        });
 
         Users = new List<ApplicationUser>
         {
@@ -84,7 +83,7 @@ public class RequestServiceTestsUtils : UnitTestBaseUtils
                 Name = "Coders_Backend",
                 Description = "A amazing project constructed for Software Engineering II",
                 GithubUrl = "https://github.com/guilhermecostam/coders_backend",
-                OwnerId = default,
+                OwnerId = Users[0].Id,
                 DiscordUrl = null,
                 DateCreation = default,
                 IsDeleted = false,
@@ -93,7 +92,8 @@ public class RequestServiceTestsUtils : UnitTestBaseUtils
             new Project
             {
                 Id = Guid.NewGuid(),
-                Name = "SomeProject"
+                Name = "SomeProject",
+                OwnerId = Users[1].Id
             },
             new Project
             {
@@ -116,36 +116,10 @@ public class RequestServiceTestsUtils : UnitTestBaseUtils
                 Id = Guid.NewGuid(),
                 UserId = Users[2].Id,
                 ProjectId = Projects[2].Id
-            }
-        };
-
-        Requests = new List<ProjectJoinRequest>
-        {
-            new ProjectJoinRequest
-            {
-                Id = Guid.NewGuid(),
-                Status = RequestStatus.Open,
-                UserId = Guid.NewGuid(),
-                ProjectId = default
-            }, 
-            new ProjectJoinRequest
-            {
-                Id = Guid.NewGuid(),
-                Status = RequestStatus.Open,
-                UserId = Users[1].Id,
-                ProjectId = Projects[1].Id
             },
-            new ProjectJoinRequest
+            new Collaborator
             {
                 Id = Guid.NewGuid(),
-                Status = RequestStatus.Open,
-                UserId = Guid.NewGuid(),
-                ProjectId = Projects[2].Id
-            },
-            new ProjectJoinRequest
-            {
-                Id = Guid.NewGuid(),
-                Status = RequestStatus.Open,
                 UserId = Guid.NewGuid(),
                 ProjectId = Projects[2].Id
             }

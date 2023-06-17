@@ -6,11 +6,11 @@ using Xunit.Sdk;
 
 namespace Coders_Back.UnitTest
 {
-    public class UnitTestBase
+    public class UnitTestBaseUtils
     {
         private AppDbContext? Context { get; }
 
-        protected UnitTestBase()
+        protected UnitTestBaseUtils()
         {
             var builder = new DbContextOptionsBuilder<AppDbContext>();
             builder.UseInMemoryDatabase("AppDbContextInMemory");
