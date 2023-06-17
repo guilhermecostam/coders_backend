@@ -11,15 +11,13 @@ public class ProjectService : IProjectService
 {
     private readonly IGithubApi _githubApi;
     private readonly IRepository<Project> _projects;
-    private readonly IRepository<ProjectJoinRequest> _requests;
     private readonly IRepository<ApplicationUser> _users;
     private readonly IRepository<Collaborator> _collaborators;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ProjectService(IRepository<Project> projects, IRepository<ProjectJoinRequest> requests, IRepository<ApplicationUser> users, IUnitOfWork unitOfWork, IRepository<Collaborator> collaborators, IGithubApi githubApi)
+    public ProjectService(IRepository<Project> projects, IRepository<ApplicationUser> users, IUnitOfWork unitOfWork, IRepository<Collaborator> collaborators, IGithubApi githubApi)
     {
         _projects = projects;
-        _requests = requests;
         _users = users;
         _unitOfWork = unitOfWork;
         _collaborators = collaborators;
@@ -30,10 +28,14 @@ public class ProjectService : IProjectService
     {
         var usersDbSet = _users.GetDbSet();
         var projectsDbSet = _projects.GetDbSet();
+        
         var query = from project in projectsDbSet
-            join user in usersDbSet on project.OwnerId equals user.Id
+            join user in usersDbSet on project.OwnerId equals user.Id into userGroup
+            from user in userGroup.DefaultIfEmpty()
             select new { project, userGhName = user.GithubProfile };
+        
         var projects = await query.ToListAsync();
+        
         return projects.Select( async projectAndName =>
         {
             projectAndName.project.Technologies = await _githubApi.GetTechnologiesByProject(projectAndName.userGhName, GetGhRepositoryNameByUrl(projectAndName.project.GithubUrl));
@@ -121,12 +123,12 @@ public class ProjectService : IProjectService
     {
         //TODO : block delete owner collaborator !! 
         var collaborator = await _collaborators.GetById(collaboratorId);
-        if (collaborator != null) return;
+        if (collaborator == null) return;
         
         var project = await _projects.GetById(collaborator!.ProjectId);
-        if (project != null) return;
+        if (project == null) return;
 
-        if (project!.OwnerId == userId)
+        if (project.OwnerId == userId)
         {
             _collaborators.Delete(collaborator);
             await _unitOfWork.SaveChangesAsync();
