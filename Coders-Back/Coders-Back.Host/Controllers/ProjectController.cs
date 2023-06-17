@@ -101,7 +101,7 @@ public class ProjectController : ControllerBase
     {
         var isOwner = await _projectService.IsProjectOwner(User.GetCurrentUserId()!.Value, projectId);
         if (!isOwner) return Unauthorized();
-        var requestOutputs = await _requestService.GetByProject(projectId);
+        var requestOutputs = await _requestService.GetPendingByProject(projectId);
         return Ok(requestOutputs);
     }
     

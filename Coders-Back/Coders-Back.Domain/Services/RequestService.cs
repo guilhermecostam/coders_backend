@@ -24,6 +24,7 @@ public class RequestService : IRequestService
         _projectService = projectService;
     }
 
+    //TODO: refactor this passing all validation logic to specify method
     public async Task<ProjectJoinRequestCreateOutput> Create(Guid projectId, Guid userId)
     {
         var project = await _projects.GetById(projectId);
@@ -89,7 +90,7 @@ public class RequestService : IRequestService
         return pendingRequests;
     }
 
-    public async Task<List<ProjectJoinRequestOutput>> GetByProject(Guid projectId)
+    public async Task<List<ProjectJoinRequestOutput>> GetPendingByProject(Guid projectId)
     {
         var requestDbSet = _requests.GetDbSet();
         var requests = requestDbSet.Where(r =>
