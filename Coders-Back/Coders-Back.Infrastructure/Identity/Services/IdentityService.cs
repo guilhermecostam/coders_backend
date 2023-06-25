@@ -26,22 +26,29 @@ public class IdentityService : IIdentityService
         _jwtOptions = jwtOptions;
     }
 
+    public async Task ConfirmEmail(Guid userId, string token)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        await _userManager.ConfirmEmailAsync(user, token);
+    }
     public async Task<RegisterOutput> Register(RegisterInput input)
     {
         var user = new ApplicationUser
         {
+            Id = Guid.NewGuid(),
             UserName = input.UserName,
             Email = input.Email,
-            EmailConfirmed = true,
+            EmailConfirmed = false,
             Name = input.Name
         };
 
         var result = await _userManager.CreateAsync(user, input.Password);
         if (!result.Succeeded)
             return new RegisterOutput { Success = false, Errors = result.Errors.Select(error => error.Description).ToList() };
-        
+
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         await _userManager.SetLockoutEnabledAsync(user, false);
-        return new RegisterOutput { Success = result.Succeeded, };
+        return new RegisterOutput { Success = result.Succeeded, ConfirmationEmailToken = token, UserId = user.Id };
     }
 
     public async Task<LoginOutput> Login(LoginInput input)
@@ -61,7 +68,17 @@ public class IdentityService : IIdentityService
                 Token = null,
                 LoginError = LoginErrorsOutput.InvalidUsernameOrPassword    
             };
-        }    
+        }
+
+        if (!await _userManager.IsEmailConfirmedAsync(user))
+        {
+            return new LoginOutput
+            {
+                Success = false,
+                LoginError = LoginErrorsOutput.EmailNotConfirmed
+            };
+        }
+        
         var result = await _signInManager.PasswordSignInAsync(user, input.Password, false, false);
         return new LoginOutput
         {

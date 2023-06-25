@@ -21,10 +21,12 @@ public class IdentityServiceTests
         result.Errors!.Count.Should().BeGreaterThan(0);
         result.Success.Should().BeFalse();
 
-        utils.UserManagerMock.Verify(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
-
+        utils.UserManagerMock.Verify(m => 
+            m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
         utils.UserManagerMock.Verify(m => 
             m.SetLockoutEnabledAsync(It.IsAny<ApplicationUser>(), It.IsAny<bool>()), Times.Never);
+        utils.UserManagerMock.Verify(m => 
+            m.ConfirmEmailAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Never);
     }
     
     [Fact(DisplayName = "Try to register a valid new user")]
@@ -39,8 +41,12 @@ public class IdentityServiceTests
         result.Success.Should().BeTrue();
         result.Errors.Should().BeNull();
         
-        utils.UserManagerMock.Verify(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
-        utils.UserManagerMock.Verify(m => m.SetLockoutEnabledAsync(It.IsAny<ApplicationUser>(), It.Is<bool>(e => e == false)));
+        utils.UserManagerMock.Verify(m => 
+            m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
+        utils.UserManagerMock.Verify(m => 
+            m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
+        utils.UserManagerMock.Verify(m => 
+            m.SetLockoutEnabledAsync(It.IsAny<ApplicationUser>(), It.Is<bool>(e => e == false)));
     }
     
     [Fact(DisplayName = "Try to login with invalid User")]
