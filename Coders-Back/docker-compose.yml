@@ -10,7 +10,7 @@
     networks: 
       - coders-network-yml
     volumes:
-      - /var/lib/docker/volumes/sqlserver/_data:/var/opt/mssql
+      - /var/lib/docker/volumes/sqlserver/_data:/var/opt/mssql # use :/mssql/data for windows
   
   coders-back:
     container_name: coders-backend-yml
@@ -23,7 +23,7 @@
     depends_on: 
       - coders-db
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=FrontendDevelopment # FrontendDevelopment, Development, Production
       - DB_PORT=1433
       - DB_HOST=coders-db
       - DB_NAME=CodersDB
@@ -31,7 +31,7 @@
       - CONNECTION_STRING=Server=coders-db,1433;Database=CodersDB;User ID=sa;Password=Pass123..;TrustServerCertificate=True;MultipleActiveResultSets=True
     networks:
       - coders-network-yml
-    command: ["dotnet", "ef", "database update"]
+    # command: ["dotnet", "ef", "database update"]
 
 networks:
   coders-network-yml:

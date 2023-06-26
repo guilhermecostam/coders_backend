@@ -20,7 +20,7 @@ var services = builder.Services;
 // Add services to the container.
 services.AddControllers();
 
-var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ??
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? //using by docker compose
                        builder.Configuration.GetConnectionString("DefaultConnection");
 
 services.AddDbContext<AppDbContext>(opts =>
@@ -81,10 +81,10 @@ builder.Host.UseSerilog((_, lc) => lc
 
 var app = builder.Build();
 
-app.InitializeDatabaseMigrations();
+if (app.Environment.IsEnvironment("FrontendDevelopment")) app.InitializeDatabaseMigrations();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) //TODO: criar ambiente para docker
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("FrontendDevelopment"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
