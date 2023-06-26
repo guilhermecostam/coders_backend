@@ -4,6 +4,7 @@ using Coders_Back.Domain.ExternalServices;
 using Coders_Back.Domain.Interfaces;
 using Coders_Back.Domain.Services;
 using Coders_Back.Infrastructure.DataAbstractions;
+using Coders_Back.Infrastructure.EntityFramework;
 using Coders_Back.Infrastructure.EntityFramework.Context;
 using Coders_Back.Infrastructure.Extensions;
 using Coders_Back.Infrastructure.Identity.Services;
@@ -80,8 +81,10 @@ builder.Host.UseSerilog((_, lc) => lc
 
 var app = builder.Build();
 
+app.InitializeDatabaseMigrations();
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment()) //TODO: criar ambiente para docker
 {
     app.UseSwagger();
     app.UseSwaggerUI();
