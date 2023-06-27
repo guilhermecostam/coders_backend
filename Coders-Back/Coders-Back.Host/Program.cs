@@ -4,6 +4,7 @@ using Coders_Back.Domain.ExternalServices;
 using Coders_Back.Domain.Interfaces;
 using Coders_Back.Domain.Services;
 using Coders_Back.Infrastructure.DataAbstractions;
+using Coders_Back.Infrastructure.EntityFramework;
 using Coders_Back.Infrastructure.EntityFramework.Context;
 using Coders_Back.Infrastructure.Extensions;
 using Coders_Back.Infrastructure.Identity.Services;
@@ -19,8 +20,11 @@ var services = builder.Services;
 // Add services to the container.
 services.AddControllers();
 
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? //using by docker compose
+                       builder.Configuration.GetConnectionString("DefaultConnection");
+
 services.AddDbContext<AppDbContext>(opts =>
-    opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!));
+    opts.UseSqlServer(connectionString!));
 
 services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<AppDbContext>()
@@ -77,8 +81,10 @@ builder.Host.UseSerilog((_, lc) => lc
 
 var app = builder.Build();
 
+if (app.Environment.IsEnvironment("FrontendDevelopment")) await app.InitializeDatabaseMigrations();
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("FrontendDevelopment"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();

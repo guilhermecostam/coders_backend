@@ -25,14 +25,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
+      <ProjectReference Include="..\Coders-Back.Domain\Coders-Back.Domain.csproj" />
+      <ProjectReference Include="..\Coders-Back.Infrastructure\Coders-Back.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Coders-Back.Domain\Coders-Back.Domain.csproj" />
-      <ProjectReference Include="..\Coders-Back.Infrastructure\Coders-Back.Infrastructure.csproj" />
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>
