@@ -23,6 +23,7 @@
     depends_on: 
       - coders-db
     environment:
+      - SMTP_PASSWORD=
       - ASPNETCORE_ENVIRONMENT=FrontendDevelopment # FrontendDevelopment, Development, Production
       - DB_PORT=1433
       - DB_HOST=coders-db

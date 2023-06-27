@@ -42,6 +42,7 @@ services.AddScoped<IUnitOfWork, UnitOfWork>();
 services.AddTransient<IProjectService, ProjectService>();
 services.AddTransient<IRequestService, RequestService>();
 services.AddTransient<IGithubApi, GithubApi>();
+services.AddTransient<IEmailServiceProvider, EmailServiceProvider>();
 
 #endregion
 
@@ -68,8 +69,8 @@ builder.Services.AddSwaggerGen(c =>
                     Type = ReferenceType.SecurityScheme, 
                     Id = "Bearer" 
                 } 
-            }, 
-            new string[] {} 
+            },
+            Array.Empty<string>()
         } 
     }); 
 });

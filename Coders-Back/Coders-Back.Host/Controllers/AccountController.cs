@@ -1,6 +1,5 @@
-using System.Net;
-using System.Net.Mail;
 using Coders_Back.Domain.DTOs.Input;
+using Coders_Back.Domain.Interfaces;
 using Coders_Back.Infrastructure.Identity.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,20 +10,12 @@ namespace Coders_Back.Host.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly IIdentityService _identityService;
+    private readonly IEmailServiceProvider _emailServiceProvider;
 
-    public AccountController(IIdentityService identityService)
+    public AccountController(IIdentityService identityService, IEmailServiceProvider emailServiceProvider)
     {
         _identityService = identityService;
-    }
-
-    [HttpGet("confirmEmail")]
-    public async Task<IActionResult> ConfirmEmail([FromQuery] Guid userId, [FromQuery] string token)
-    {
-        await _identityService.ConfirmEmail(userId, token);
-        
-        const string htmlContent = "<html><body><h1>O seu e-mail foi confirmado com sucesso!</h1></body></html>";
-
-        return Content(htmlContent, "text/html");
+        _emailServiceProvider = emailServiceProvider;
     }
 
     [HttpPost("register")]
@@ -38,27 +29,12 @@ public class AccountController : ControllerBase
             "Account", 
             new { registerResult.UserId, token = registerResult.ConfirmationEmailToken },
             protocol: HttpContext.Request.Scheme );
-        
-        var message = new MailMessage();
-        message.From = new MailAddress("codersproject@outlook.com");
-        message.To.Add(input.Email);
-        message.Subject = "Confirmação de E-mail Coders!";
-        
-        var body = $"<p>Clique no link abaixo para confirmar seu e-mail:</p>" +
-                      $"<p><a href={confirmationUrl}>CLIQUE AQUI</a></p>";
-    
-        message.Body = body;
-        message.IsBodyHtml = true;
 
-        var smtpClient = new SmtpClient("smtp.office365.com", 587);
-        smtpClient.UseDefaultCredentials = false;
-        smtpClient.Credentials = new NetworkCredential("null", "null"); // Ocultamos para não aparecer informações confidenciais do projeto
-        smtpClient.EnableSsl = true;
+        _emailServiceProvider.SendEmail("Confirmação de E-mail Coders!",new[] { input.Email }, ()
+                => $"<p>Clique no link abaixo para confirmar seu e-mail:</p><p><a href={confirmationUrl}>CLIQUE AQUI</a></p>",
+            true);
         
-        smtpClient.Send(message);
-            
         return Ok(registerResult);
-
     }
     
     [HttpPost("login")]
@@ -68,5 +44,15 @@ public class AccountController : ControllerBase
         if (loginResult.Success)
             return Ok(loginResult);
         return Unauthorized(loginResult);
+    }
+
+    [HttpGet("confirmEmail")]
+    public async Task<IActionResult> ConfirmEmail([FromQuery] Guid userId, [FromQuery] string token)
+    {
+        await _identityService.ConfirmEmail(userId, token);
+        
+        const string htmlContent = "<html><body><h1>O seu e-mail foi confirmado com sucesso!</h1></body></html>";
+
+        return Content(htmlContent, "text/html");
     }
 }
