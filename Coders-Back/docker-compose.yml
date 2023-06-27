@@ -10,14 +10,14 @@
     networks: 
       - coders-network-yml
     volumes:
-      - /var/lib/docker/volumes/sqlserver/_data:/var/opt/mssql # use :/mssql/data for windows
+      - /var/lib/docker/volumes/sqlserver/_data:/var/opt/mssql # use :/mssql/data instead :/var/opt/mssql for WINDOWS
   
   coders-back:
     container_name: coders-backend-yml
-    image: jtauanpm/coders-backend
-    build:
-      context: .
-      dockerfile: Coders-Back.Host/Dockerfile
+    image: jtauanpm/coders-backend:3.0.0
+#    build:
+#      context: .
+#      dockerfile: Coders-Back.Host/Dockerfile
     ports:
       - 8080:80
     depends_on: 
