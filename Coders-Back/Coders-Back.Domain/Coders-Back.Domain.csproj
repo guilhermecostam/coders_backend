@@ -8,9 +8,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Reference Include="Microsoft.Extensions.Identity.Stores">
-        <HintPath>..\..\..\..\.nuget\packages\microsoft.extensions.identity.stores\6.0.16\lib\net6.0\Microsoft.Extensions.Identity.Stores.dll</HintPath>
-      </Reference>
+        <SonarQubeSetting Include="sonar.coverage.exclusions">
+            <Value>**/DTOs/**, **/Entities/**, **/Enums/**</Value>
+        </SonarQubeSetting>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.16" />
+      <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0-preview.3.23174.8" />
+      <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="6.0.16" />
     </ItemGroup>
 
 </Project>

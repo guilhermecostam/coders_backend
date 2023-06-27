@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.ComponentModel.DataAnnotations;
 using Coders_Back.Domain.DTOs.Input;
 using Coders_Back.Domain.DTOs.Output;
 using Coders_Back.Domain.Entities;
@@ -25,26 +26,40 @@ public class IdentityService : IIdentityService
         _jwtOptions = jwtOptions;
     }
 
+    public async Task ConfirmEmail(Guid userId, string token)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        await _userManager.ConfirmEmailAsync(user, token);
+    }
     public async Task<RegisterOutput> Register(RegisterInput input)
     {
         var user = new ApplicationUser
         {
+            Id = Guid.NewGuid(),
             UserName = input.UserName,
             Email = input.Email,
-            EmailConfirmed = true
+            EmailConfirmed = false,
+            Name = input.Name
         };
 
         var result = await _userManager.CreateAsync(user, input.Password);
         if (!result.Succeeded)
             return new RegisterOutput { Success = false, Errors = result.Errors.Select(error => error.Description).ToList() };
-        
+
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         await _userManager.SetLockoutEnabledAsync(user, false);
-        return new RegisterOutput { Success = result.Succeeded, };
+        return new RegisterOutput { Success = result.Succeeded, ConfirmationEmailToken = token, UserId = user.Id };
     }
 
     public async Task<LoginOutput> Login(LoginInput input)
     {
-        var user = await _userManager.FindByEmailAsync(input.Email);
+        ApplicationUser user;
+
+        if (new EmailAddressAttribute().IsValid(input.Identifier))
+            user = await _userManager.FindByEmailAsync(input.Identifier);
+        else
+            user = await _userManager.FindByNameAsync(input.Identifier);
+
         if (user is null)
         {
             return new LoginOutput
@@ -53,27 +68,37 @@ public class IdentityService : IIdentityService
                 Token = null,
                 LoginError = LoginErrorsOutput.InvalidUsernameOrPassword    
             };
-        }    
+        }
+
+        if (!await _userManager.IsEmailConfirmedAsync(user))
+        {
+            return new LoginOutput
+            {
+                Success = false,
+                LoginError = LoginErrorsOutput.EmailNotConfirmed
+            };
+        }
+        
         var result = await _signInManager.PasswordSignInAsync(user, input.Password, false, false);
         return new LoginOutput
         {
             Success = result.Succeeded,
-            Token = result.Succeeded ? await GetToken(input.Email) : null,
+            Token = result.Succeeded ? await GetToken(user) : null,
             LoginError = result.GetSignInResultErrors()
         };
     }   
 
-    private async Task<string> GetToken(string email)
+    private async Task<string> GetToken(ApplicationUser user)
     {
-        var user = await _userManager.FindByEmailAsync(email);
         var claims = await GetClaims(user);
-        var expirationTime = DateTime.Now.AddSeconds(_jwtOptions.Value.Expiration); 
+        var now = DateTime.Now;
+        var expirationTime = now.AddSeconds(_jwtOptions.Value.Expiration); 
         
         var jwt = new JwtSecurityToken(
             issuer: _jwtOptions.Value.Issuer,
             audience: _jwtOptions.Value.Audience,
             claims: claims,
-            notBefore: DateTime.Now,
+            notBefore: now,
             expires: expirationTime,
             signingCredentials: _jwtOptions.Value.SigningCredentials);
 
@@ -92,8 +117,7 @@ public class IdentityService : IIdentityService
         claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
         claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, dateTimeNow));
         claims.Add(new Claim(JwtRegisteredClaimNames.Iat, dateTimeNow));
-        
-        
+
         foreach (var role in roles)
             claims.Add(new Claim("role", role));
 
