@@ -14,7 +14,7 @@
   
   coders-back:
     container_name: coders-backend-yml
-    image: ${DOCKER_REGISTRY-}coders-back
+    image: jtauanpm/coders-backend
     build:
       context: .
       dockerfile: Coders-Back.Host/Dockerfile
