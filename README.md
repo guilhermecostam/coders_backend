@@ -6,7 +6,7 @@ Acessando o link abaixo será possível acessar o repositório do front-end e é
 <br>
 [Repositório front-end do projeto](https://github.com/guilhermecostam/coders_frontend)
 
-# Passo a passo de como rodar este projeto
+# Passo a passo de utilizar o projeto para desenvolvimento
 
 1. Caso ainda não possua em sua máquina, faça a instalação do SDK [.NET 6.0](https://dotnet.microsoft.com/pt-br/download/dotnet/6.0). 
     1. Certifique-se de deixar a cli do dotnet disponível para seu uso ao menos na pasta do clone, é necessário ter o SDK instalado no mesmo disco em que está seu clone. 
@@ -27,3 +27,10 @@ Acessando o link abaixo será possível acessar o repositório do front-end e é
     2. Insomnia (Open Source Client HTTP).
     3. Postman (Client HTTP).
     4. Fique a vontade para utilizar uma interface gráfica para utilizar melhor seu SGDB, utilize as mesmas informações do passo 3.*v* para se conectar atráves da ferramenta gráfica.
+
+
+# Passo a passo para rodar o projeto utilizando docker
+
+1. Certifique-se de ter o docker e o puglin docker compose instalados e funcionando.
+2. Caso esteja utilizando Windows, entre no arquico docker-compose.yml e altere o volume do container de acordo com comentários.
+3. Acesse o diretório Coders-Back no terminal e execute `docker compose up`.  
