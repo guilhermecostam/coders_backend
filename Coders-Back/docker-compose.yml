@@ -14,7 +14,7 @@
   
   coders-back:
     container_name: coders-backend-yml
-    image: jtauanpm/coders-backend:3.0.0
+    image: jtauanpm/coders-backend:3.0.0 #see https://hub.docker.com/r/jtauanpm/coders-backend/ for last version
 #    build:
 #      context: .
 #      dockerfile: Coders-Back.Host/Dockerfile
@@ -23,6 +23,7 @@
     depends_on: 
       - coders-db
     environment:
+      - SMTP_PASSWORD=
       - ASPNETCORE_ENVIRONMENT=FrontendDevelopment # FrontendDevelopment, Development, Production
       - DB_PORT=1433
       - DB_HOST=coders-db

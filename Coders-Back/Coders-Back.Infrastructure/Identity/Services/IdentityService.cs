@@ -31,7 +31,7 @@ public class IdentityService : IIdentityService
         var user = await _userManager.FindByIdAsync(userId.ToString());
         await _userManager.ConfirmEmailAsync(user, token);
     }
-    public async Task<RegisterOutput> Register(RegisterInput input)
+    public async Task<(RegisterOutput, string?)> Register(RegisterInput input)
     {
         var user = new ApplicationUser
         {
@@ -44,11 +44,12 @@ public class IdentityService : IIdentityService
 
         var result = await _userManager.CreateAsync(user, input.Password);
         if (!result.Succeeded)
-            return new RegisterOutput { Success = false, Errors = result.Errors.Select(error => error.Description).ToList() };
+            return (new RegisterOutput
+                { Success = false, Errors = result.Errors.Select(error => error.Description).ToList() }, null);
 
-        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         await _userManager.SetLockoutEnabledAsync(user, false);
-        return new RegisterOutput { Success = result.Succeeded, ConfirmationEmailToken = token, UserId = user.Id };
+        return (new RegisterOutput { Success = result.Succeeded, UserId = user.Id }, emailConfirmationToken);
     }
 
     public async Task<LoginOutput> Login(LoginInput input)
