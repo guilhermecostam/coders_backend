@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Mail;
+using Coders_Back.Domain.DTOs.Input;
 using Coders_Back.Domain.Interfaces;
 using Microsoft.Extensions.Configuration;
 
@@ -17,20 +18,20 @@ public class EmailServiceProvider : IEmailServiceProvider
     private const int Port = 587;
     private static string? _pass;
     
-    public void SendEmail(string subject, IEnumerable<string> recipients,Func<string> body, bool isBodyHtml = false, bool enableSsl = true, bool useDefaultCredentials = false)
+    public void SendEmail(SendEmailInput input)
     {
         
         var message = new MailMessage
         {
-            Body = body.Invoke(),
+            Body = input.Body.Invoke(),
             From = new MailAddress(Email),
-            IsBodyHtml = isBodyHtml,
-            Subject = subject
+            IsBodyHtml = input.IsBodyHtml,
+            Subject = input.Subject
         };
         
         message.From = new MailAddress(Email);
         
-        foreach (var recipient in recipients)
+        foreach (var recipient in input.Recipients)
         {
             message.To.Add(recipient);
         }
@@ -38,10 +39,10 @@ public class EmailServiceProvider : IEmailServiceProvider
         var smtpClient = new SmtpClient
         {
             Credentials = new NetworkCredential(Email, _pass),
-            EnableSsl = enableSsl,
+            EnableSsl = input.EnableSsl,
             Host = Host,
             Port = Port,
-            UseDefaultCredentials = useDefaultCredentials
+            UseDefaultCredentials = input.UseDefaultCredentials
         };
 
         smtpClient.Send(message);

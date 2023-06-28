@@ -21,18 +21,25 @@ public class AccountController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterInput input)
     {
-        var registerResult = await _identityService.Register(input);
+        var (registerResult, emailConfirmationToken) = await _identityService.Register(input);
 
         if (!registerResult.Success) return BadRequest(registerResult);
         var confirmationUrl = Url.Action(     
             "ConfirmEmail",     
             "Account", 
-            new { registerResult.UserId, token = registerResult.ConfirmationEmailToken },
+            new { registerResult.UserId, token = emailConfirmationToken },
             protocol: HttpContext.Request.Scheme );
-
-        _emailServiceProvider.SendEmail("Confirmação de E-mail Coders!",new[] { input.Email }, ()
-                => $"<p>Clique no link abaixo para confirmar seu e-mail:</p><p><a href={confirmationUrl}>CLIQUE AQUI</a></p>",
-            true);
+        
+        var emailInput = new SendEmailInput
+        {
+            Subject = "Confirmação de E-mail Coders!",
+            Recipients = new[] { input.Email },
+            Body = () => $"<p>Clique no link abaixo para confirmar seu e-mail:</p><p><a href={confirmationUrl}>CLIQUE AQUI</a></p>",
+            IsBodyHtml = true
+        };
+        
+        _emailServiceProvider.SendEmail(emailInput);
+        registerResult.Message = "Confirme sua conta clicando no link do email que lhe enviamos.";
         
         return Ok(registerResult);
     }
@@ -47,6 +54,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet("confirmEmail")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IActionResult> ConfirmEmail([FromQuery] Guid userId, [FromQuery] string token)
     {
         await _identityService.ConfirmEmail(userId, token);
