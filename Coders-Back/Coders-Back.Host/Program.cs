@@ -1,4 +1,5 @@
 using Coders_Back.Domain.DataAbstractions;
+using Coders_Back.Domain.DTOs.Input;
 using Coders_Back.Domain.Entities;
 using Coders_Back.Domain.ExternalServices;
 using Coders_Back.Domain.Interfaces;
@@ -43,6 +44,7 @@ services.AddTransient<IProjectService, ProjectService>();
 services.AddTransient<IRequestService, RequestService>();
 services.AddTransient<IGithubApi, GithubApi>();
 services.AddTransient<IEmailServiceProvider, EmailServiceProvider>();
+services.AddTransient<IUserService, UserService>();
 
 #endregion
 
