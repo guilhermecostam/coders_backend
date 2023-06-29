@@ -15,11 +15,12 @@ public class IdentityServiceTests
         var utils = IdentityServiceTestsUtils.NewUtils(true);
         var identityService = new IdentityService(utils.SinInManagerMock.Object, utils.UserManagerMock.Object,  utils.JwtOptionsMock.Object);
        
-        var result = await identityService.Register(utils.RegisterInput);
+        var (result, token) = await identityService.Register(utils.RegisterInput);
 
         //Assert
         result.Errors!.Count.Should().BeGreaterThan(0);
         result.Success.Should().BeFalse();
+        token.Should().BeNull();
 
         utils.UserManagerMock.Verify(m => 
             m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
@@ -35,11 +36,12 @@ public class IdentityServiceTests
         var utils = IdentityServiceTestsUtils.NewUtils();
         var identityService = new IdentityService(utils.SinInManagerMock.Object, utils.UserManagerMock.Object,  utils.JwtOptionsMock.Object);
        
-        var result = await identityService.Register(utils.RegisterInput);
+        var (result, token) = await identityService.Register(utils.RegisterInput);
         
         //Assert
         result.Success.Should().BeTrue();
         result.Errors.Should().BeNull();
+        token.Should().NotBeNull();
         
         utils.UserManagerMock.Verify(m => 
             m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
@@ -86,4 +88,5 @@ public class IdentityServiceTests
         utils.SinInManagerMock.Verify(m => 
             m.PasswordSignInAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Once);
     }
+    //TODO: Try Login with email not confirmed
 }

@@ -54,6 +54,9 @@ public class IdentityServiceTestsUtils
         UserManagerMock.Setup(m => m.GetClaimsAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(new List<Claim>());
         UserManagerMock.Setup(m => m.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(new List<string>());
         UserManagerMock.Setup(m => m.ConfirmEmailAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(new IdentityResult());
+        UserManagerMock.Setup(m => m.IsEmailConfirmedAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(true);
+        UserManagerMock.Setup(m => m.GenerateEmailConfirmationTokenAsync(It.IsAny<ApplicationUser>()))
+            .ReturnsAsync("token");
         
         SinInManagerMock = new Mock<SignInManager<ApplicationUser>>(
             UserManagerMock.Object, Mock.Of<IHttpContextAccessor>(), 
