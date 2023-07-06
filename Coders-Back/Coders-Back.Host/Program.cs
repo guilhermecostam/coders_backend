@@ -82,7 +82,7 @@ builder.Host.UseSerilog((_, lc) => lc
 
 var app = builder.Build();
 
-if (app.Environment.IsEnvironment("FrontendDevelopment")) await app.InitializeDatabaseMigrations();
+if (!app.Environment.IsDevelopment()) await app.InitializeDatabaseMigrations();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("FrontendDevelopment"))
