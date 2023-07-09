@@ -33,6 +33,23 @@ services.AddIdentity<ApplicationUser, ApplicationRole>()
 services.AddAuthentication(builder.Configuration);
 services.AddMemoryCache();
 
+services.AddCors(options =>
+{
+    options.AddPolicy("DevelopmentCorsPolicy", policyBuilder =>
+    {
+        policyBuilder.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+    
+    options.AddPolicy("ProductionCorsPolicy", policyBuilder =>
+    {
+        policyBuilder.WithOrigins(Environment.GetEnvironmentVariable("PRODUCTION_ORIGIN") ?? string.Empty)
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 #region DI
 
 services.AddScoped<IIdentityService, IdentityService>();
@@ -47,8 +64,8 @@ services.AddTransient<IEmailServiceProvider, EmailServiceProvider>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme() 
     { 
@@ -89,6 +106,11 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("FrontendDe
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("DevelopmentCorsPolicy");
+}
+else
+{
+    app.UseCors("ProductionCorsPolicy");
 }
 
 app.UseHttpsRedirection();

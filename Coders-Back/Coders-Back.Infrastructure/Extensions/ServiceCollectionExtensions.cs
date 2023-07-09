@@ -13,13 +13,14 @@ public static class ServiceCollectionExtensions
     public static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         var jwtAppSettingOptions = configuration.GetSection(nameof(JwtOptions));
-        var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetSection("JwtOptions:SecurityKey").Value!));
+        var securityKey = Environment.GetEnvironmentVariable("SECURITY_KEY") ?? configuration.GetSection("JwtOptions:SecurityKey").Value!;
+        var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(securityKey));
 
         services.Configure<JwtOptions>(options =>
         {
             options.Issuer = jwtAppSettingOptions[nameof(JwtOptions.Issuer)];
             options.Audience = jwtAppSettingOptions[nameof(JwtOptions.Audience)];
-            options.SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
+            options.SigningCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha512);
             options.Expiration = int.Parse(jwtAppSettingOptions[nameof(JwtOptions.Expiration)] ?? "0");
         });
 
@@ -41,7 +42,7 @@ public static class ServiceCollectionExtensions
             ValidAudience = configuration.GetSection("JwtOptions:Audience").Value,
 
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = securityKey,
+            IssuerSigningKey = symmetricSecurityKey,
 
             RequireExpirationTime = true,
             ValidateLifetime = true,
