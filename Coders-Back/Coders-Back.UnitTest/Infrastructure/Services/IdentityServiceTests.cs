@@ -5,7 +5,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace Coders_Back.UnitTest.Infrastructure;
+namespace Coders_Back.UnitTest.Infrastructure.Services;
 
 public class IdentityServiceTests
 {
