@@ -23,6 +23,7 @@
     depends_on: 
       - coders-db
     environment:
+      - SMTP_EMAIL=
       - SMTP_PASSWORD=
       - PRODUCTION_ORIGIN=https://codersufrn.netlify.app/
       - SECURITY_KEY=

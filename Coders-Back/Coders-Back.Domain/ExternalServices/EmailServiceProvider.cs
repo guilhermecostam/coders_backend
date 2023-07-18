@@ -15,28 +15,29 @@ public class EmailServiceProvider : IEmailServiceProvider
     {
         _logger = logger;
         _password = Environment.GetEnvironmentVariable("SMTP_PASSWORD") ?? configuration["EmailProvider:Password"];
+        _email = Environment.GetEnvironmentVariable("SMTP_EMAIL") ?? configuration["EmailProvider:Email"];
     }
     
-    private const string Email = "codersproject@outlook.com";
+    private static string? _email;
     private const string Host = "smtp.office365.com";
     private const int Port = 587;
     private static string? _password;
     
     public void SendEmail(SendEmailInput input)
     {
-        if (_password is null)
-            _logger.LogError("SMTP password not found. If running for development," +
+        if (_password is null || _email is null)
+            _logger.LogError("SMTP password or email not found. If running for development," +
                              " check appsettings.json or docker-compose.yml and correct");
         
         var message = new MailMessage
         {
             Body = input.Body.Invoke(),
-            From = new MailAddress(Email),
+            From = new MailAddress(_email),
             IsBodyHtml = input.IsBodyHtml,
             Subject = input.Subject
         };
         
-        message.From = new MailAddress(Email);
+        message.From = new MailAddress(_email);
         
         foreach (var recipient in input.Recipients)
         {
@@ -45,7 +46,7 @@ public class EmailServiceProvider : IEmailServiceProvider
         
         var smtpClient = new SmtpClient
         {
-            Credentials = new NetworkCredential(Email, _password),
+            Credentials = new NetworkCredential(_email, _password),
             EnableSsl = true, 
             Host = Host,
             Port = Port,
