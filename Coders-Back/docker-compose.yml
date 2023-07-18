@@ -24,6 +24,8 @@
       - coders-db
     environment:
       - SMTP_PASSWORD=
+      - PRODUCTION_ORIGIN=https://codersufrn.netlify.app/
+      - SECURITY_KEY=
       - ASPNETCORE_ENVIRONMENT=FrontendDevelopment # FrontendDevelopment, Development, Production
       - DB_PORT=1433
       - DB_HOST=coders-db
