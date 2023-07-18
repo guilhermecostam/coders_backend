@@ -1,5 +1,6 @@
 using Coders_Back.Domain.DTOs.Input;
 using Coders_Back.Domain.Interfaces;
+using Coders_Back.Domain.Templates;
 using Coders_Back.Infrastructure.Identity.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +26,7 @@ public class AccountController : ControllerBase
 
         if (!registerResult.Success) return BadRequest(registerResult);
         var confirmationUrl = Url.Action(     
-            "ConfirmEmail",     
+            "confirmEmail",     
             "Account", 
             new { registerResult.UserId, token = emailConfirmationToken },
             protocol: HttpContext.Request.Scheme );
@@ -34,7 +35,7 @@ public class AccountController : ControllerBase
         {
             Subject = "Confirmação de E-mail Coders!",
             Recipients = new[] { input.Email },
-            Body = () => $"<p>Clique no link abaixo para confirmar seu e-mail:</p><p><a href={confirmationUrl}>CLIQUE AQUI</a></p>",
+            Body = () => EmailTemplates.ConfirmationTemplate(confirmationUrl!),
             IsBodyHtml = true
         };
         
@@ -58,9 +59,7 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> ConfirmEmail([FromQuery] Guid userId, [FromQuery] string token)
     {
         await _identityService.ConfirmEmail(userId, token);
-        
-        const string htmlContent = "<html><body><h1>O seu e-mail foi confirmado com sucesso!</h1></body></html>";
 
-        return Content(htmlContent, "text/html");
+        return Content(EmailTemplates.ConfirmedTemplate(), "text/html");
     }
 }
