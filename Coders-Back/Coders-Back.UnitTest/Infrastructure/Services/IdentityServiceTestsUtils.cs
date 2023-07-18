@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Moq;
 
-namespace Coders_Back.UnitTest.Infrastructure;
+namespace Coders_Back.UnitTest.Infrastructure.Services;
 
 public class IdentityServiceTestsUtils
 {

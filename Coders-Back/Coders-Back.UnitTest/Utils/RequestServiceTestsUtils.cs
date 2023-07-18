@@ -4,7 +4,7 @@ using Coders_Back.Domain.Enums;
 using Coders_Back.Domain.Interfaces;
 using Moq;
 
-namespace Coders_Back.UnitTest.Domain.Utils;
+namespace Coders_Back.UnitTest.Utils;
 
 public class RequestServiceTestsUtils : UnitTestBaseUtils
 {

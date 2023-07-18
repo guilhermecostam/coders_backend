@@ -27,6 +27,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Coders-Back.Domain\Coders-Back.Domain.csproj" />
+      <ProjectReference Include="..\Coders-Back.Host\Coders-Back.Host.csproj" />
       <ProjectReference Include="..\Coders-Back.Infrastructure\Coders-Back.Infrastructure.csproj" />
     </ItemGroup>
 

@@ -1,7 +1,7 @@
 using Coders_Back.Domain.DTOs.Input;
 using Coders_Back.Domain.DTOs.Output;
 using Coders_Back.Domain.Services;
-using Coders_Back.UnitTest.Domain.Utils;
+using Coders_Back.UnitTest.Utils;
 using FluentAssertions;
 using Moq;
 using Xunit;

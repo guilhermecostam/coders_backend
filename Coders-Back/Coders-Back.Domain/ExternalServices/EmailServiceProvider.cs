@@ -46,7 +46,7 @@ public class EmailServiceProvider : IEmailServiceProvider
         var smtpClient = new SmtpClient
         {
             Credentials = new NetworkCredential(Email, _password),
-            EnableSsl = input.EnableSsl,
+            EnableSsl = true, 
             Host = Host,
             Port = Port,
             UseDefaultCredentials = input.UseDefaultCredentials

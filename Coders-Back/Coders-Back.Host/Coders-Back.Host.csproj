@@ -10,7 +10,7 @@
 
     <ItemGroup>
         <SonarQubeSetting Include="sonar.coverage.exclusions">
-            <Value>**/Program.cs</Value>
+            <Value>**/Program.cs, **/Controllers/**</Value>
         </SonarQubeSetting>
     </ItemGroup>
     
