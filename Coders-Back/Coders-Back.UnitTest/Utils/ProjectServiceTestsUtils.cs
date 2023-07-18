@@ -3,7 +3,7 @@ using Coders_Back.Domain.Entities;
 using Coders_Back.Domain.Interfaces;
 using Moq;
 
-namespace Coders_Back.UnitTest.Domain.Utils;
+namespace Coders_Back.UnitTest.Utils;
 
 public class ProjectServiceTestsUtils : UnitTestBaseUtils
 {
