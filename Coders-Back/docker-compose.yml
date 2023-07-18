@@ -9,8 +9,8 @@
       - SA_PASSWORD=Pass123..
     networks: 
       - coders-network-yml
-    volumes:
-      - /var/lib/docker/volumes/sqlserver/_data:/var/opt/mssql # use :/mssql/data instead :/var/opt/mssql for WINDOWS
+    volumes: # /var/lib/docker/volumes/sqlserver/_data:
+      - sqlserver_data:/var/opt/mssql # use :/mssql/data instead :/var/opt/mssql for WINDOWS
   
   coders-back:
     container_name: coders-backend-yml
@@ -41,3 +41,4 @@ networks:
     
 volumes:
   sqlserver_data:
+    
